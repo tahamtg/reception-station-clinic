@@ -1,0 +1,299 @@
+@font-face {
+    font-family: vazir;
+    src: url('./assets/Vazirmatn-Regular.ttf');
+}
+
+* {
+    font-family: vazir;
+}
+
+.person-page {
+    direction: rtl;
+    min-height: 100vh;
+    padding: 35px;
+    background: #0b0d10;
+    color: #fff;
+    box-sizing: border-box;
+}
+
+.person-search {
+    max-width: 900px;
+    margin: 0 auto 20px;
+}
+
+.person-search input {
+    width: 100%;
+    box-sizing: border-box;
+
+    padding: 15px 18px;
+
+    background: #11151a;
+    border: 1px solid #20262d;
+    border-radius: 14px;
+
+    color: #fff;
+    outline: none;
+
+    font-family: inherit;
+    font-size: 14px;
+
+    transition: 0.2s ease;
+}
+
+.person-search input::placeholder {
+    color: #747d89;
+}
+
+.person-search input:focus {
+    border-color: #3a424c;
+    background: #13181e;
+}
+
+.search-status {
+    max-width: 900px;
+    margin: 0 auto;
+
+    padding: 35px;
+
+    box-sizing: border-box;
+
+    text-align: center;
+
+    background: #11151a;
+    border: 1px solid #20262d;
+    border-radius: 18px;
+
+    color: #747d89;
+    font-size: 14px;
+}
+
+.person-table-container {
+    max-width: 900px;
+    margin: 0 auto;
+
+    overflow-x: auto;
+
+    background: #11151a;
+    border: 1px solid #20262d;
+    border-radius: 18px;
+}
+
+.person-table {
+    width: 100%;
+    border-collapse: collapse;
+    direction: rtl;
+}
+
+.person-table th,
+.person-table td {
+    padding: 18px;
+    text-align: right;
+
+    border-bottom: 1px solid #20262d;
+}
+
+.person-table th {
+    background: #0f1317;
+
+    color: #747d89;
+
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.person-table td {
+    color: #fff;
+    font-size: 14px;
+}
+
+.person-table tbody tr {
+    transition: 0.2s ease;
+}
+
+.person-table tbody tr:hover {
+    background: #151a20;
+}
+
+.person-table tr:last-child td {
+    border-bottom: none;
+}
+
+.person-header {
+    max-width: 900px;
+    margin: 0 auto 25px;
+
+    padding: 28px;
+
+    background: #11151a;
+    border: 1px solid #20262d;
+    border-radius: 18px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.person-label {
+    color: #858d98;
+    font-size: 14px;
+}
+
+.person-header h1 {
+    margin: 8px 0;
+    font-size: 28px;
+}
+
+.person-header p {
+    margin: 0;
+
+    color: #737b86;
+    font-size: 13px;
+}
+
+.person-avatar {
+    width: 65px;
+    height: 65px;
+
+    border-radius: 50%;
+
+    background: #1d232b;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.person-grid {
+    max-width: 900px;
+    margin: auto;
+
+    display: grid;
+
+    grid-template-columns: repeat(2, 1fr);
+
+    gap: 15px;
+}
+
+.info-box {
+    padding: 22px;
+
+    background: #11151a;
+
+    border: 1px solid #20262d;
+    border-radius: 14px;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 9px;
+}
+
+.info-box span {
+    color: #747d89;
+    font-size: 13px;
+}
+
+.info-box strong {
+    font-size: 16px;
+    font-weight: 500;
+
+    word-break: break-word;
+}
+
+.info-box.full {
+    grid-column: 1 / -1;
+}
+
+.person-actions {
+    max-width: 900px;
+    margin: 25px auto 0;
+
+    display: flex;
+    gap: 10px;
+}
+
+.person-actions button {
+    border: none;
+
+    border-radius: 10px;
+
+    padding: 12px 20px;
+
+    cursor: pointer;
+
+    font-family: inherit;
+    font-size: 14px;
+
+    transition: 0.2s ease;
+}
+
+.person-actions button:hover {
+    opacity: 0.8;
+}
+
+.edit-btn {
+    background: #fff;
+    color: #0b0d10;
+}
+
+.back-btn {
+    background: #181d23;
+    color: #fff;
+}
+
+.person-error {
+    direction: rtl;
+
+    color: white;
+
+    padding: 30px;
+}
+
+@media (max-width: 650px) {
+
+    .person-page {
+        padding: 15px;
+    }
+
+    .person-header {
+        padding: 20px;
+    }
+
+    .person-header h1 {
+        font-size: 23px;
+    }
+
+    .person-avatar {
+        width: 55px;
+        height: 55px;
+
+        font-size: 21px;
+    }
+
+    .person-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .info-box.full {
+        grid-column: auto;
+    }
+
+    .person-table-container {
+        overflow-x: auto;
+    }
+
+    .person-table {
+        min-width: 650px;
+    }
+
+    .person-actions {
+        flex-direction: column;
+    }
+
+    .person-actions button {
+        width: 100%;
+    }
+}

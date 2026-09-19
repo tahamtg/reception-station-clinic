@@ -76,3 +76,44 @@
         margin-left: 5px;
     }
 }
+
+.peoples-search {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.peoples-search input {
+    width: 100%;
+    padding: 14px 18px;
+    box-sizing: border-box;
+    background: #11151a;
+    border: 1px solid #292d34;
+    border-radius: 12px;
+    color: #fff;
+    outline: none;
+    font-family: inherit;
+    font-size: 14px;
+    transition: 0.2s ease;
+}
+
+.peoples-search input::placeholder {
+    color: #747b85;
+}
+
+.peoples-search input:focus {
+    border-color: #3a4049;
+    background: #15181d;
+}
+
+.peoples-search-status {
+    width: 100%;
+    padding: 25px;
+    box-sizing: border-box;
+    margin-bottom: 20px;
+    background: #11151a;
+    border: 1px solid #292d34;
+    border-radius: 12px;
+    color: #9aa1aa;
+    text-align: center;
+    font-size: 14px;
+}

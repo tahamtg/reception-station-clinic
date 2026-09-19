@@ -1,25 +1,38 @@
 import axios from "axios";
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect, useRef } from "react";
 import "./reception.css";
 import * as Yup from "yup";
-import { PeoplesContext } from "./PeopleContext";
+import { contextCon } from "./ConsentContexts";
 
-interface Peopl{
-        name: string,
-        age: string,
-        phone: string,
-        file: string,
-        address: string,
-        id: number,
+interface People {
+    name: string;
+    age: string;
+    phone: string;
+    file: string;
+    address: string;
+    reserve_date: string;
+    image: string;
 }
 
 const Reception: React.FC = () => {
 
-    const context = useContext(PeoplesContext);
+    const contextConsent = useContext(contextCon);
+    const web = useRef<WebSocket | null>(null);
 
-    if (!context) {
-        return null;
-    }
+    const [error, setError] =
+        useState<Yup.ValidationError | null>(null);
+
+    const [success, setSuccess] = useState(false);
+
+    const [info, setInfo] = useState<People>({
+        name: "",
+        age: "",
+        phone: "",
+        file: "",
+        address: "",
+        reserve_date: "",
+        image: "",
+    });
 
     const schema = Yup.object({
         name: Yup.string()
@@ -34,50 +47,116 @@ const Reception: React.FC = () => {
             ),
 
         age: Yup.number()
+            .typeError("سن باید عدد باشد")
             .required("سن الزامی می‌باشد")
             .min(1, "سن باید حداقل ۱ باشد"),
 
         file: Yup.number()
+            .typeError("کد پذیرش باید عدد باشد")
             .required("کد پذیرش الزامی می‌باشد"),
 
         address: Yup.string()
             .required("آدرس الزامی می‌باشد")
             .min(5, "آدرس باید حداقل ۵ کاراکتر باشد"),
+
+        reserve_date: Yup.string()
+            .required("تاریخ الزامی است")
     });
 
-    const [error, setError] = useState<Yup.ValidationError | null>(null);
-    const [success, setSuccess] = useState(false);
+    useEffect(() => {
 
-    const [info, setInfo] = useState<Peopl>();
+        const wkurl =
+            "ws://127.0.0.1:8000/ws/services/getdata/";
 
-    const postInfo = async (e: React.FormEvent<HTMLFormElement>) => {
+        web.current = new WebSocket(wkurl);
+
+        web.current.onopen = () => {
+            console.log("connected websocket");
+        };
+
+        web.current.onmessage = (event) => {
+
+            const data = JSON.parse(event.data);
+
+            console.log(data);
+        };
+
+        web.current.onerror = (error) => {
+            console.log("WebSocket error:", error);
+        };
+
+        web.current.onclose = () => {
+            console.log("WebSocket closed");
+        };
+
+        return () => {
+
+            web.current?.close();
+            web.current = null;
+
+        };
+
+    }, []);
+
+     useEffect(() => {
+
+    const getPeople = async () => {
+
+        const rqres = await axios.get(
+            "http://127.0.0.1:8000/api/get_info/"
+        );
+
+        console.log("GET DATA:", rqres.data);
+
+        if (
+            web.current &&
+            web.current.readyState === WebSocket.OPEN
+        ) {
+
+            web.current.send(
+                JSON.stringify({
+                    type: "send_data",
+                    data: rqres.data,
+                })
+            );
+
+        }
+
+    };
+
+    getPeople();
+
+}, []);
+
+    const postInfo = async (
+        e: React.FormEvent<HTMLFormElement>
+    ) => {
+
         e.preventDefault();
 
         try {
-            await schema.validate(info, {
-                abortEarly: false
-            });
 
-            const person = {
-                name: info.name,
-                age: Number(info.age),
-                phone: info.phone,
-                file: Number(info.file),
-                address: info.address,
-                id: info.id,
-            };
+            await schema.validate(info, {
+                abortEarly: false,
+            });
 
             const res = await axios.post(
                 "http://127.0.0.1:8000/api/post_info/",
-                person
+                {
+                    ...info,
+                    age: Number(info.age),
+                    file: Number(info.file),
+                }
             );
 
             console.log(res.data);
 
-            context.setPeople((prev) => [
-                ...prev,
-                person
-            ]);
+            console.log("DJANGO DATA:", res.data);
+
+            console.log(
+                "WEBSOCKET STATE:",
+                web.current?.readyState
+            );
 
             setSuccess(true);
 
@@ -87,7 +166,8 @@ const Reception: React.FC = () => {
                 phone: "",
                 file: "",
                 address: "",
-                id:"",
+                reserve_date: "",
+                image: "",
             });
 
             setError(null);
@@ -97,13 +177,21 @@ const Reception: React.FC = () => {
             setSuccess(false);
 
             if (error instanceof Yup.ValidationError) {
+
                 setError(error);
+
                 console.log("YUP:", error.inner);
+
                 return;
             }
 
             if (axios.isAxiosError(error)) {
-                console.log("DJANGO:", error.response?.data);
+
+                console.log(
+                    "DJANGO:",
+                    error.response?.data
+                );
+
                 return;
             }
 
@@ -112,27 +200,50 @@ const Reception: React.FC = () => {
     };
 
     const getError = (field: string) => {
-        return error?.inner.find((err) => err.path == field)?.message;
+
+        return error?.inner.find(
+            (err) => err.path === field
+        )?.message;
+
     };
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setInfo({
+    const handleChange = (
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => {
+
+        const newInfo = {
             ...info,
             [e.target.name]: e.target.value,
-        });
+        };
+
+        setInfo(newInfo);
+
+        contextConsent?.setDataConsent(
+            JSON.stringify(newInfo)
+        );
+
+        setError(null);
+        setSuccess(false);
     };
 
     return (
         <div className="reception-container">
+
             <div className="reception-card">
 
                 <h1>ایستگاه پذیرش</h1>
-                <p>اطلاعات مراجعه‌کننده را وارد کنید</p>
+
+                <p>
+                    اطلاعات مراجعه‌کننده را وارد کنید
+                </p>
 
                 <form onSubmit={postInfo}>
 
                     <div className="form-group">
-                        <label>نام و نام خانوادگی</label>
+
+                        <label>
+                            نام و نام خانوادگی
+                        </label>
 
                         <input
                             type="text"
@@ -147,10 +258,14 @@ const Reception: React.FC = () => {
                                 {getError("name")}
                             </span>
                         )}
+
                     </div>
 
                     <div className="form-group">
-                        <label>شماره تلفن</label>
+
+                        <label>
+                            شماره تلفن
+                        </label>
 
                         <input
                             type="tel"
@@ -165,10 +280,14 @@ const Reception: React.FC = () => {
                                 {getError("phone")}
                             </span>
                         )}
+
                     </div>
 
                     <div className="form-group">
-                        <label>سن</label>
+
+                        <label>
+                            سن
+                        </label>
 
                         <input
                             type="number"
@@ -183,10 +302,14 @@ const Reception: React.FC = () => {
                                 {getError("age")}
                             </span>
                         )}
+
                     </div>
 
                     <div className="form-group">
-                        <label>کد پذیرش</label>
+
+                        <label>
+                            کد پذیرش
+                        </label>
 
                         <input
                             type="number"
@@ -201,10 +324,14 @@ const Reception: React.FC = () => {
                                 {getError("file")}
                             </span>
                         )}
+
                     </div>
 
                     <div className="form-group">
-                        <label>آدرس</label>
+
+                        <label>
+                            آدرس
+                        </label>
 
                         <input
                             type="text"
@@ -219,6 +346,54 @@ const Reception: React.FC = () => {
                                 {getError("address")}
                             </span>
                         )}
+
+                    </div>
+
+                    <div className="form-group">
+
+                        <label>
+                            تاریخ رزرو
+                        </label>
+
+                        <input
+                            type="date"
+                            name="reserve_date"
+                            value={info.reserve_date}
+                            onChange={handleChange}
+                        />
+
+                        {getError("reserve_date") && (
+                            <span className="error">
+                                {getError("reserve_date")}
+                            </span>
+                        )}
+
+                    </div>
+
+                    <div className="form-group">
+
+                        <label>
+                            عکس قبل
+                        </label>
+
+                        <input
+                            type="file"
+                            name="image"
+                            onChange={(e) => {
+
+                                const file =
+                                    e.target.files?.[0];
+
+                                if (!file) return;
+
+                                setInfo({
+                                    ...info,
+                                    image: file.name
+                                });
+
+                            }}
+                        />
+
                     </div>
 
                     {success && (
@@ -232,9 +407,12 @@ const Reception: React.FC = () => {
                     </button>
 
                 </form>
+
             </div>
+
         </div>
     );
 };
 
 export default Reception;
+

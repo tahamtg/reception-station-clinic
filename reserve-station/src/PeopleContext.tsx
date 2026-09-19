@@ -1,4 +1,5 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
+import axios from "axios";
 
 interface People {
     name: string;
@@ -6,7 +7,9 @@ interface People {
     phone: string;
     file: number;
     address: string;
+    reserve_date: string;
     id: number;
+    date: string;
 }
 
 interface PeopleContextType {
@@ -23,6 +26,22 @@ interface Children {
 const PeopleProvider: React.FC<Children> = ({ children }) => {
 
     const [people, setPeople] = useState<People[]>([]);
+
+    useEffect(() => {
+        const getPeople = async () => {
+            try {
+                const res = await axios.get(
+                    "http://127.0.0.1:8000/api/get_info/"
+                );
+
+                setPeople(res.data);
+            } catch (error) {
+                console.log(error);
+            }
+        };
+
+        getPeople();
+    }, []);
 
     return (
         <PeoplesContext.Provider
