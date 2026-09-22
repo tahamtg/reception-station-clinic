@@ -4,24 +4,30 @@ import PeopleProvider from "./PeopleContext";
 import Peoples from "./peopls";
 import Layout from "./layout";
 import PersonInfo from "./information";
-import ConsentContext from "./ConsentContexts";
+import CallCenterContext from "./callcenterContexts";
 import Consent from "./consent";
 import Assistant from "./Assistant";
+import CallCenterTable from "./callcentertable";
+import CallCenter from "./callcenter";
+import PhotoGraph from "./photographer";
 
 const App = () => {
     return (
         <PeopleProvider>
-        <ConsentContext>
+        <CallCenterContext>
             <Layout>
                 <Routes>
                     <Route path="/" element={<Reception />} />
                     <Route path="/peoples" element={<Peoples />} />
                     <Route path="/consent" element={<Consent />} />
                     <Route path="/Assistant" element={<Assistant />} />
+                    <Route path="/callcentertable" element={<CallCenterTable />} />
+                    <Route path="/photographer" element={<PhotoGraph />} />
+                    <Route path="/callcenter" element={<CallCenter />} />
                     <Route path="/peoples/:id" element={<PersonInfo />} />
                 </Routes>
             </Layout>
-        </ConsentContext>
+        </CallCenterContext>
         </PeopleProvider>
     );
 };

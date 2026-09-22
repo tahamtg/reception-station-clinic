@@ -1,0 +1,161 @@
+.callcenter-container {
+    width: 100%;
+    padding: 25px;
+    box-sizing: border-box;
+    direction: rtl;
+}
+
+.callcenter-search {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.callcenter-search input {
+    width: 100%;
+    padding: 12px 15px;
+    box-sizing: border-box;
+    border: 1px solid #444;
+    border-radius: 10px;
+    background: #1c1c1c;
+    color: white;
+    outline: none;
+    font-size: 15px;
+}
+
+.callcenter-search input:focus {
+    border-color: #777;
+}
+
+.callcenter-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #171717;
+    color: white;
+}
+
+.callcenter-table th,
+.callcenter-table td {
+    padding: 14px;
+    border-bottom: 1px solid #333;
+    text-align: right;
+}
+
+.callcenter-table th {
+    background: #222;
+    font-weight: 600;
+}
+
+.callcenter-table tr:hover {
+    background: #1e1e1e;
+}
+
+.callcenter-input {
+    width: 100%;
+    padding: 8px 10px;
+    box-sizing: border-box;
+    border: 1px solid #555;
+    border-radius: 7px;
+    background: #111;
+    color: white;
+    outline: none;
+}
+
+.callcenter-input:focus {
+    border-color: #888;
+}
+
+.callcenter-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.callcenter-btn {
+    border: none;
+    padding: 9px 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.callcenter-btn:hover {
+    transform: translateY(-1px);
+}
+
+.callcenter-delete {
+    background: #d93636;
+    color: white;
+}
+
+.callcenter-delete:hover {
+    background: #b82c2c;
+}
+
+.callcenter-submit {
+    background: #2e8b57;
+    color: white;
+}
+
+.callcenter-submit:hover {
+    background: #246f46;
+}
+
+.callcenter-submit:disabled {
+    background: #555;
+    color: #aaa;
+    cursor: not-allowed;
+    opacity: 0.7;
+    transform: none;
+}
+
+.callcenter-edit {
+    background: #3b82f6;
+    color: white;
+}
+
+.callcenter-edit:hover {
+    background: #2563eb;
+}
+
+.callcenter-save {
+    background: #8b5cf6;
+    color: white;
+}
+
+.callcenter-save:hover {
+    background: #7c3aed;
+}
+
+.callcenter-details {
+    background: #444;
+    color: white;
+}
+
+.callcenter-details:hover {
+    background: #333;
+}
+
+.callcenter-export {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.callcenter-export-btn {
+    background: #222;
+    color: white;
+}
+
+.callcenter-export-btn:hover {
+    background: #111;
+}
+
+.callcenter-search-status {
+    padding: 20px;
+    text-align: center;
+    color: #aaa;
+    font-size: 15px;
+}
+

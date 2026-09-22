@@ -1,15 +1,15 @@
 import React, { useContext } from "react";
 import { useParams } from "react-router-dom";
-import { PeoplesContext } from "./PeopleContext";
+import { contextCon } from "./callcenterContexts";
 import "./personInfo.css";
 
 const PersonInfo: React.FC = () => {
 
-    const context = useContext(PeoplesContext);
+    const CallCenterContext = useContext(contextCon);
 
     const { id } = useParams<{ id: string }>();
 
-    if (!context) {
+    if (!CallCenterContext) {
         return (
             <div className="person-error">
                 Context پیدا نشد.
@@ -17,11 +17,25 @@ const PersonInfo: React.FC = () => {
         );
     }
 
-    const person = context.people.find(
-        (item) => item.id === Number(id)
-    );
+    let person;
 
-    if (!person) {
+    try {
+
+        person = JSON.parse(
+            CallCenterContext.dataConsent || "{}"
+        );
+
+    } catch (error) {
+
+        return (
+            <div className="person-error">
+                اطلاعات مراجعه‌کننده نامعتبر است.
+            </div>
+        );
+
+    }
+
+    if (!person.name) {
         return (
             <div className="person-page">
 
@@ -57,7 +71,7 @@ const PersonInfo: React.FC = () => {
                     </h1>
 
                     <p>
-                        شناسه مراجعه‌کننده: #{person.id}
+                        شناسه مراجعه‌کننده: #{id}
                     </p>
 
                 </div>
@@ -71,6 +85,7 @@ const PersonInfo: React.FC = () => {
             <div className="person-grid">
 
                 <div className="info-box">
+
                     <span>
                         نام و نام خانوادگی
                     </span>
@@ -78,9 +93,11 @@ const PersonInfo: React.FC = () => {
                     <strong>
                         {person.name}
                     </strong>
+
                 </div>
 
                 <div className="info-box">
+
                     <span>
                         سن
                     </span>
@@ -88,9 +105,11 @@ const PersonInfo: React.FC = () => {
                     <strong>
                         {person.age} سال
                     </strong>
+
                 </div>
 
                 <div className="info-box">
+
                     <span>
                         شماره تماس
                     </span>
@@ -98,46 +117,17 @@ const PersonInfo: React.FC = () => {
                     <strong>
                         {person.phone}
                     </strong>
+
                 </div>
 
                 <div className="info-box">
+
                     <span>
-                        شماره پرونده
+                        بیعانه
                     </span>
 
                     <strong>
-                        {person.file}
-                    </strong>
-                </div>
-
-                <div className="info-box">
-                    <span>
-                        تاریخ ثبت مراجعه کننده
-                    </span>
-
-                    <strong>
-                        {person.date}
-                    </strong>
-                </div>
-
-                <div className="info-box">
-                    <span>
-                        تاریخ رزرو
-                    </span>
-
-                    <strong>
-                        {person.reserve_date}
-                    </strong>
-                </div>
-
-                <div className="info-box full">
-
-                    <span>
-                        آدرس
-                    </span>
-
-                    <strong>
-                        {person.address || "ثبت نشده"}
+                        {person.price || "ثبت نشده"}
                     </strong>
 
                 </div>

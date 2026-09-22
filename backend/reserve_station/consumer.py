@@ -51,6 +51,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                         "date": person.date,
                         "services": person.services,
                         "id": person.id,
+                        "price": person.price,
                     }
                 )
 
@@ -68,6 +69,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 "date": str(event["date"]),
                 "id": event["id"],
                 "services": event["services"],
+                "price": event["price"],
             })
         )
 
@@ -87,28 +89,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 "address": person.address,
                 "reserve_date": str(person.reserve_date),
                 "date": str(person.date),
-                "service": person.services,
-                "id": person.id,
+                "services": person.services,
+                "price": person.price,
             })
         )
-
-        async def for_Assistant(self, event):
-        
-                person = await sync_to_async(
-                    Personal.objects.get
-                )(id=event["id"])
-        
-                await self.send(
-                    text_data=json.dumps({
-                        "type": "get_Data_for_Assistant",
-                        "name": person.name,
-                        "age": person.age,
-                        "phone": person.phone,
-                        "file": person.file,
-                        "address": person.address,
-                        "reserve_date": str(person.reserve_date),
-                        "date": str(person.date),
-                        "service": person.services,
-                        "id": person.id,
-                    })
-                )

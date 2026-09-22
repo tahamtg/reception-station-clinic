@@ -12,12 +12,14 @@ interface afrad {
     date: string;
     id: number;
     services: string;
+    price: number;
 }
 
 const Assistant: React.FC = () => {
 
     const [afrad, setAfrad] = useState<afrad[]>([]);
-    const [selectedId, setSelectedId] = useState<number | null>(null);
+    const [selectedId, setSelectedId] =
+        useState<number | null>(null);
 
     const web = useRef<WebSocket | null>(null);
 
@@ -48,7 +50,10 @@ const Assistant: React.FC = () => {
 
             const data = JSON.parse(event.data);
 
-            if (data.type === "get_Data_for_Assistant") {
+            if (
+                data.type ===
+                "get_Data_for_Assistant"
+            ) {
 
                 const person: afrad = {
                     name: data.name,
@@ -60,12 +65,14 @@ const Assistant: React.FC = () => {
                     date: data.date,
                     id: data.id,
                     services: data.services,
+                    price: data.price,
                 };
 
                 setAfrad((prev) => {
 
                     const exists = prev.some(
-                        (item) => item.id === person.id
+                        (item) =>
+                            item.id === person.id
                     );
 
                     if (exists) {
@@ -84,11 +91,20 @@ const Assistant: React.FC = () => {
         };
 
         web.current.onerror = (error) => {
-            console.log("WebSocket error:", error);
+
+            console.log(
+                "WebSocket error:",
+                error
+            );
+
         };
 
         web.current.onclose = () => {
-            console.log("WebSocket closed");
+
+            console.log(
+                "WebSocket closed"
+            );
+
         };
 
         return () => {
@@ -101,9 +117,12 @@ const Assistant: React.FC = () => {
     }, []);
 
     return (
+
         <div className="consent-container">
 
-            <h1>بخش دستیار</h1>
+            <h1>
+                بخش دستیار
+            </h1>
 
             <div className="consent-list">
 
@@ -112,9 +131,15 @@ const Assistant: React.FC = () => {
                     <div
                         key={person.id}
                         className={`person-box ${
-                            selectedId === person.id ? "active" : ""
+                            selectedId === person.id
+                                ? "active"
+                                : ""
                         }`}
-                        onClick={() => setSelectedId(person.id)}
+                        onClick={() =>
+                            setSelectedId(
+                                person.id
+                            )
+                        }
                     >
 
                         <span>
@@ -138,7 +163,9 @@ const Assistant: React.FC = () => {
                         </h2>
 
                         <button
-                            onClick={() => setSelectedId(null)}
+                            onClick={() =>
+                                setSelectedId(null)
+                            }
                         >
                             بستن
                         </button>
@@ -148,43 +175,90 @@ const Assistant: React.FC = () => {
                     <div className="details-grid">
 
                         <div>
-                            <span>آیدی</span>
-                            <p>{selectedPerson.id}</p>
+                            <span>
+                                آیدی
+                            </span>
+
+                            <p>
+                                {selectedPerson.id}
+                            </p>
                         </div>
 
                         <div>
-                            <span>نام</span>
-                            <p>{selectedPerson.name}</p>
+                            <span>
+                                نام
+                            </span>
+
+                            <p>
+                                {selectedPerson.name}
+                            </p>
                         </div>
 
                         <div>
-                            <span>سن</span>
-                            <p>{selectedPerson.age}</p>
+                            <span>
+                                سن
+                            </span>
+
+                            <p>
+                                {selectedPerson.age}
+                            </p>
                         </div>
 
                         <div>
-                            <span>تلفن</span>
-                            <p>{selectedPerson.phone}</p>
+                            <span>
+                                تلفن
+                            </span>
+
+                            <p>
+                                {selectedPerson.phone}
+                            </p>
                         </div>
 
                         <div>
-                            <span>کد پذیرش</span>
-                            <p>{selectedPerson.file}</p>
+                            <span>
+                                کد پذیرش
+                            </span>
+
+                            <p>
+                                {selectedPerson.file}
+                            </p>
                         </div>
 
                         <div>
-                            <span>تاریخ رزرو</span>
-                            <p>{selectedPerson.reserve_date}</p>
+                            <span>
+                                تاریخ رزرو
+                            </span>
+
+                            <p>
+                                {selectedPerson.reserve_date}
+                            </p>
                         </div>
 
                         <div>
-                            <span>خدمات برای مراجعه کننده</span>
-                            <p>{selectedPerson.services}</p>
+                            <span>
+                                خدمات برای مراجعه کننده
+                            </span>
+
+                            <p>
+                                {selectedPerson.services}
+                            </p>
+                        </div>
+
+                        <div>
+                            <span>
+                                قیمت
+                            </span>
+
+                            <p>
+                                {selectedPerson.price}
+                            </p>
                         </div>
 
                         <div className="address">
 
-                            <span>آدرس</span>
+                            <span>
+                                آدرس
+                            </span>
 
                             <p>
                                 {selectedPerson.address}

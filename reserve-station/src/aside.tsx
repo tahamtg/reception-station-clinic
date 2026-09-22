@@ -9,9 +9,10 @@ const Aside: React.FC<Props> = () => {
         <aside className="sidebar">
             <nav className="sidebar-nav">
                 <Link to="/">ثبت اطلاعات</Link>
-                <Link to="/peoples">مراجعه کنندگان</Link>
-                <Link to="/consent">مشاوره</Link>
-                <Link to="/Assistant">دستیار ها</Link>
+                <Link to="/peoples">جدول پذیرش</Link>
+                <Link to="/photographer">عکاس</Link>
+                <Link to="/callcenter">کال سنتر</Link>
+                <Link to="/callcentertable">جدول کال سنتر</Link>
             </nav>
         </aside>
     );

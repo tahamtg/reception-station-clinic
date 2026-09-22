@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useContext, useState, useEffect, useRef } from "react";
 import "./reception.css";
 import * as Yup from "yup";
-import { contextCon } from "./ConsentContexts";
+import { contextCon } from "./callcenterContexts";
 
 interface People {
     name: string;
@@ -12,6 +12,7 @@ interface People {
     address: string;
     reserve_date: string;
     image: string;
+    price: string;
 }
 
 const Reception: React.FC = () => {
@@ -31,6 +32,7 @@ const Reception: React.FC = () => {
         file: "",
         address: "",
         reserve_date: "",
+        price: "",
         image: "",
     });
 
@@ -168,6 +170,7 @@ const Reception: React.FC = () => {
                 address: "",
                 reserve_date: "",
                 image: "",
+                price: "",
             });
 
             setError(null);
@@ -208,23 +211,26 @@ const Reception: React.FC = () => {
     };
 
     const handleChange = (
-        e: React.ChangeEvent<HTMLInputElement>
-    ) => {
+    e: React.ChangeEvent<HTMLInputElement>
+        ) => {
 
-        const newInfo = {
-            ...info,
-            [e.target.name]: e.target.value,
+            const newInfo = {
+                ...info,
+                [e.target.name]:
+                    e.target.name === "price"
+                        ? e.target.value
+                        : e.target.value,
+            };
+
+            setInfo(newInfo);
+
+            contextConsent?.setDataConsent(
+                JSON.stringify(newInfo)
+            );
+
+            setError(null);
+            setSuccess(false);
         };
-
-        setInfo(newInfo);
-
-        contextConsent?.setDataConsent(
-            JSON.stringify(newInfo)
-        );
-
-        setError(null);
-        setSuccess(false);
-    };
 
     return (
         <div className="reception-container">
@@ -370,28 +376,19 @@ const Reception: React.FC = () => {
 
                     </div>
 
+
                     <div className="form-group">
 
                         <label>
-                            عکس قبل
+                            پرداخت
                         </label>
 
                         <input
-                            type="file"
-                            name="image"
-                            onChange={(e) => {
-
-                                const file =
-                                    e.target.files?.[0];
-
-                                if (!file) return;
-
-                                setInfo({
-                                    ...info,
-                                    image: file.name
-                                });
-
-                            }}
+                            type="number"
+                            name="price"
+                            placeholder="پرداخت"
+                            value={info.price}
+                            onChange={handleChange}
                         />
 
                     </div>

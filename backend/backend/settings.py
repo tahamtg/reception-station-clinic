@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-$=*1vn&6tj*&v1cvzel6t%+t51%2q85_htg%p(uh2fibgh5^(d'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
     "localhost",
@@ -97,7 +97,6 @@ DATABASES = {
     }
 }
 
-
 # Password validation
 # https://docs.djangoproject.com/en/6.1/ref/settings/#auth-password-validators
 
@@ -144,4 +143,5 @@ MAILERS = {
     },
 }
 
-MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_URL = "/pictures/"
+MEDIA_ROOT = BASE_DIR / "pictures"

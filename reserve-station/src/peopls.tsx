@@ -12,76 +12,105 @@ interface Update {
     name: string;
     file: string;
     address: string;
-    phone: number;
+    phone: string;
     age: number;
     reserve_date: string;
+    price: number;
 }
 
 const Peoples: React.FC = () => {
+
     const context = useContext(PeoplesContext);
 
-    const [is_update, setIs_update] = useState<boolean>(!true);
+    const [is_update, setIs_update] =
+        useState<boolean>(!true);
 
     const [upinfo, setUpInfo] = useState<Update>({
         name: "",
         age: 0,
         file: "",
         address: "",
-        phone: 0,
+        phone: "",
         reserve_date: "",
+        price: 0,
     });
 
-    const [userId, setUserId] = useState<number | null>(null);
-    const [search, setSearch] = useState("");
-    const [isSearching, setIsSearching] = useState(false);
+    const [userId, setUserId] =
+        useState<number | null>(null);
+
+    const [search, setSearch] =
+        useState("");
+
+    const [isSearching, setIsSearching] =
+        useState(false);
 
     const navigate = useNavigate();
 
     useEffect(() => {
+
         const getPeople = async () => {
+
             try {
+
                 const res = await axios.get(
-                    "http://127.0.0.1:8000/api/get_info/"
+                    "http://127.0.0.1:8000/api/get_submit_info/"
                 );
 
                 context?.setPeople(res.data);
+
             } catch (error) {
+
                 console.log(error);
+
             }
+
         };
 
         getPeople();
+
     }, []);
 
     if (!context) {
         return null;
     }
 
-    const filteredPeople = context.people.filter(
-        (person) =>
-            person.name.includes(search) ||
-            person.phone.includes(search) ||
-            String(person.file).includes(search)
-    );
+    const filteredPeople =
+        context.people.filter(
+            (person) =>
+                person.name.includes(search) ||
+                person.phone.includes(search) ||
+                String(person.file).includes(search)
+        );
 
     const handleSearch = (value: string) => {
+
         setSearch(value);
 
         if (value.trim()) {
+
             setIsSearching(true);
 
             setTimeout(() => {
                 setIsSearching(false);
             }, 500);
+
         } else {
+
             setIsSearching(false);
+
         }
+
     };
 
     const exportExcel = () => {
-        const worksheet = XLSX.utils.json_to_sheet(context.people);
 
-        const workbook = XLSX.utils.book_new();
+        const worksheet =
+            XLSX.utils.json_to_sheet(
+                context.people
+            );
+
+        const workbook =
+            XLSX.utils.book_new();
 
         XLSX.utils.book_append_sheet(
             workbook,
@@ -89,13 +118,19 @@ const Peoples: React.FC = () => {
             "مراجعه کنندگان"
         );
 
-        XLSX.writeFile(workbook, "people.xlsx");
+        XLSX.writeFile(
+            workbook,
+            "people.xlsx"
+        );
+
     };
 
     const js_to_pdf = () => {
+
         const doc = new jsPDF();
 
         autoTable(doc, {
+
             head: [[
                 "آیدی",
                 "نام",
@@ -104,47 +139,62 @@ const Peoples: React.FC = () => {
                 "کد پذیرش",
                 "آدرس",
                 "تاریخ رزرو",
+                "قیمت",
             ]],
 
-            body: context.people.map((add) => [
-                add.id,
-                add.name,
-                add.age,
-                add.phone,
-                add.file,
-                add.address,
-                add.reserve_date,
-            ]),
+            body: context.people.map(
+                (person) => [
+                    person.id,
+                    person.name,
+                    person.age,
+                    person.phone,
+                    person.file,
+                    person.address,
+                    person.reserve_date,
+                    person.price,
+                ]
+            ),
+
         });
 
         doc.save("people.pdf");
+
     };
 
     const delete_id = async (id: number) => {
+
         try {
+
             await axios.delete(
-                `http://127.0.0.1:8000/api/delete_info/${id}/`
+                `http://127.0.0.1:8000/api/delete_submit_info/${id}/`
             );
 
             context.setPeople((prev) =>
                 prev.filter(
-                    (person) => person.id !== id
+                    (person) =>
+                        person.id !== id
                 )
             );
-        } catch (e) {
-            console.log(e);
+
+        } catch (error) {
+
+            console.log(error);
+
         }
+
     };
 
     const update_id = async (
         id: number,
         args: Update
     ) => {
+
         setIs_update(true);
 
         try {
+
             const up = await axios.patch(
-                `http://127.0.0.1:8000/api/update_info/${id}/`,
+                `http://127.0.0.1:8000/api/update_submit_info/${id}/`,
                 {
                     name: args.name,
                     phone: args.phone,
@@ -152,6 +202,7 @@ const Peoples: React.FC = () => {
                     file: args.file,
                     age: args.age,
                     reserve_date: args.reserve_date,
+                    price: args.price,
                 }
             );
 
@@ -159,43 +210,57 @@ const Peoples: React.FC = () => {
                 prev.map((person) =>
                     person.id === id
                         ? {
-                              ...person,
-                              ...up.data,
-                          }
+                            ...person,
+                            ...up.data,
+                        }
                         : person
                 )
             );
 
             setIs_update(false);
             setUserId(null);
-        } catch (e) {
-            console.log(e);
+
+        } catch (error) {
+
+            console.log(error);
+
         }
+
     };
 
     return (
+
         <div className="peoples-container">
 
             <div className="peoples-search">
+
                 <input
                     type="text"
                     placeholder="جستجوی نام، شماره تماس یا شماره پرونده..."
                     value={search}
                     onChange={(e) =>
-                        handleSearch(e.target.value)
+                        handleSearch(
+                            e.target.value
+                        )
                     }
                 />
+
             </div>
 
             {isSearching ? (
+
                 <div className="peoples-search-status">
                     در حال جستجو...
                 </div>
+
             ) : (
+
                 <table className="peoples-table">
 
                     <thead>
+
                         <tr>
+
                             <th>آیدی</th>
                             <th>نام</th>
                             <th>سن</th>
@@ -203,222 +268,335 @@ const Peoples: React.FC = () => {
                             <th>کد پذیرش</th>
                             <th>آدرس</th>
                             <th>تاریخ رزرو</th>
+                            <th>قیمت</th>
                             <th>عملیات</th>
+
                         </tr>
+
                     </thead>
 
                     <tbody>
 
-                        {filteredPeople.map((person) => (
+                        {filteredPeople.map(
+                            (person) => (
 
-                            <tr key={person.id}>
+                                <tr
+                                    key={person.id}
+                                >
 
-                                <td>
-                                    {person.id}
-                                </td>
+                                    <td>
+                                        {person.id}
+                                    </td>
 
-                                <td>
-                                    {userId === person.id ? (
-                                        <input
-                                            type="text"
-                                            value={upinfo.name}
-                                            onChange={(e) =>
-                                                setUpInfo({
-                                                    ...upinfo,
-                                                    name: e.target.value,
-                                                })
-                                            }
-                                        />
-                                    ) : (
-                                        person.name
-                                    )}
-                                </td>
+                                    <td>
 
-                                <td>
-                                    {userId === person.id ? (
-                                        <input
-                                            type="number"
-                                            value={upinfo.age}
-                                            onChange={(e) =>
-                                                setUpInfo({
-                                                    ...upinfo,
-                                                    age: Number(
-                                                        e.target.value
-                                                    ),
-                                                })
-                                            }
-                                        />
-                                    ) : (
-                                        person.age
-                                    )}
-                                </td>
+                                        {userId === person.id ? (
 
-                                <td>
-                                    {userId === person.id ? (
-                                        <input
-                                            type="tel"
-                                            value={upinfo.phone}
-                                            onChange={(e) =>
-                                                setUpInfo({
-                                                    ...upinfo,
-                                                    phone: Number(
-                                                        e.target.value
-                                                    ),
-                                                })
-                                            }
-                                        />
-                                    ) : (
-                                        person.phone
-                                    )}
-                                </td>
+                                            <input
+                                                type="text"
+                                                value={
+                                                    upinfo.name
+                                                }
+                                                onChange={(e) =>
+                                                    setUpInfo({
+                                                        ...upinfo,
+                                                        name: e.target.value,
+                                                    })
+                                                }
+                                            />
 
-                                <td>
-                                    {userId === person.id ? (
-                                        <input
-                                            type="number"
-                                            value={upinfo.file}
-                                            onChange={(e) =>
-                                                setUpInfo({
-                                                    ...upinfo,
-                                                    file: e.target.value,
-                                                })
-                                            }
-                                        />
-                                    ) : (
-                                        person.file
-                                    )}
-                                </td>
+                                        ) : (
 
-                                <td>
-                                    {userId === person.id ? (
-                                        <input
-                                            type="text"
-                                            value={upinfo.address}
-                                            onChange={(e) =>
-                                                setUpInfo({
-                                                    ...upinfo,
-                                                    address: e.target.value,
-                                                })
-                                            }
-                                        />
-                                    ) : (
-                                        person.address
-                                    )}
-                                </td>
+                                            person.name
 
-                                <td>
-                                    {userId === person.id ? (
-                                        <input
-                                            type="date"
-                                            value={upinfo.reserve_date}
-                                            onChange={(e) =>
-                                                setUpInfo({
-                                                    ...upinfo,
-                                                    reserve_date:
-                                                        e.target.value,
-                                                })
-                                            }
-                                        />
-                                    ) : (
-                                        person.reserve_date
-                                    )}
-                                </td>
+                                        )}
 
-                                <td>
+                                    </td>
 
-                                    <button
-                                        onClick={() =>
-                                            delete_id(person.id)
-                                        }
-                                    >
-                                        حذف
-                                    </button>
+                                    <td>
 
-                                    <button
-                                        onClick={() => {
-                                            if (
-                                                userId === person.id
-                                            ) {
-                                                setIs_update(false);
-                                                setUserId(null);
-                                            } else {
-                                                setUserId(person.id);
-                                                setIs_update(true);
+                                        {userId === person.id ? (
 
-                                                setUpInfo({
-                                                    name: person.name,
-                                                    age: person.age,
-                                                    phone: Number(
-                                                        person.phone
-                                                    ),
-                                                    file: String(
-                                                        person.file
-                                                    ),
-                                                    address:
-                                                        person.address,
-                                                    reserve_date:
-                                                        person.reserve_date,
-                                                });
-                                            }
-                                        }}
-                                    >
-                                        {userId === person.id
-                                            ? "لغو"
-                                            : "ویرایش"}
-                                    </button>
+                                            <input
+                                                type="number"
+                                                value={
+                                                    upinfo.age
+                                                }
+                                                onChange={(e) =>
+                                                    setUpInfo({
+                                                        ...upinfo,
+                                                        age: Number(
+                                                            e.target.value
+                                                        ),
+                                                    })
+                                                }
+                                            />
 
-                                    {userId === person.id && (
+                                        ) : (
+
+                                            person.age
+
+                                        )}
+
+                                    </td>
+
+                                    <td>
+
+                                        {userId === person.id ? (
+
+                                            <input
+                                                type="tel"
+                                                value={
+                                                    upinfo.phone
+                                                }
+                                                onChange={(e) =>
+                                                    setUpInfo({
+                                                        ...upinfo,
+                                                        phone: e.target.value,
+                                                    })
+                                                }
+                                            />
+
+                                        ) : (
+
+                                            person.phone
+
+                                        )}
+
+                                    </td>
+
+                                    <td>
+
+                                        {userId === person.id ? (
+
+                                            <input
+                                                type="number"
+                                                value={
+                                                    upinfo.file
+                                                }
+                                                onChange={(e) =>
+                                                    setUpInfo({
+                                                        ...upinfo,
+                                                        file: e.target.value,
+                                                    })
+                                                }
+                                            />
+
+                                        ) : (
+
+                                            person.file
+
+                                        )}
+
+                                    </td>
+
+                                    <td>
+
+                                        {userId === person.id ? (
+
+                                            <input
+                                                type="text"
+                                                value={
+                                                    upinfo.address
+                                                }
+                                                onChange={(e) =>
+                                                    setUpInfo({
+                                                        ...upinfo,
+                                                        address: e.target.value,
+                                                    })
+                                                }
+                                            />
+
+                                        ) : (
+
+                                            person.address
+
+                                        )}
+
+                                    </td>
+
+                                    <td>
+
+                                        {userId === person.id ? (
+
+                                            <input
+                                                type="date"
+                                                value={
+                                                    upinfo.reserve_date
+                                                }
+                                                onChange={(e) =>
+                                                    setUpInfo({
+                                                        ...upinfo,
+                                                        reserve_date:
+                                                            e.target.value,
+                                                    })
+                                                }
+                                            />
+
+                                        ) : (
+
+                                            person.reserve_date
+
+                                        )}
+
+                                    </td>
+
+                                    <td>
+
+                                        {userId === person.id ? (
+
+                                            <input
+                                                type="number"
+                                                value={
+                                                    upinfo.price
+                                                }
+                                                onChange={(e) =>
+                                                    setUpInfo({
+                                                        ...upinfo,
+                                                        price: Number(
+                                                            e.target.value
+                                                        ),
+                                                    })
+                                                }
+                                            />
+
+                                        ) : (
+
+                                            person.price
+
+                                        )}
+
+                                    </td>
+
+                                    <td>
+
                                         <button
                                             onClick={() =>
-                                                update_id(
-                                                    person.id,
-                                                    upinfo
+                                                delete_id(
+                                                    person.id
                                                 )
                                             }
                                         >
-                                            ذخیره
+                                            حذف
                                         </button>
-                                    )}
 
-                                    <button
-                                        onClick={() =>
-                                            navigate(
-                                                `/peoples/${person.id}`
-                                            )
-                                        }
-                                    >
-                                        اطلاعات کاملتر
-                                    </button>
+                                        <button
+                                            onClick={() => {
 
-                                </td>
+                                                if (
+                                                    userId ===
+                                                    person.id
+                                                ) {
 
-                            </tr>
+                                                    setIs_update(
+                                                        false
+                                                    );
 
-                        ))}
+                                                    setUserId(
+                                                        null
+                                                    );
+
+                                                } else {
+
+                                                    setUserId(
+                                                        person.id
+                                                    );
+
+                                                    setIs_update(
+                                                        true
+                                                    );
+
+                                                    setUpInfo({
+                                                        name: person.name,
+                                                        age: person.age,
+                                                        phone: person.phone,
+                                                        file: String(
+                                                            person.file
+                                                        ),
+                                                        address:
+                                                            person.address,
+                                                        reserve_date:
+                                                            person.reserve_date,
+                                                        price: Number(
+                                                            person.price
+                                                        ),
+                                                    });
+
+                                                }
+
+                                            }}
+                                        >
+                                            {userId ===
+                                            person.id
+                                                ? "لغو"
+                                                : "ویرایش"}
+                                        </button>
+
+                                        {userId ===
+                                            person.id && (
+
+                                            <button
+                                                onClick={() =>
+                                                    update_id(
+                                                        person.id,
+                                                        upinfo
+                                                    )
+                                                }
+                                            >
+                                                ذخیره
+                                            </button>
+
+                                        )}
+
+                                        <button
+                                            onClick={() =>
+                                                navigate(
+                                                    `/peoples/${person.id}`
+                                                )
+                                            }
+                                        >
+                                            اطلاعات کاملتر
+                                        </button>
+
+                                    </td>
+
+                                </tr>
+
+                            )
+                        )}
 
                     </tbody>
 
                 </table>
+
             )}
 
             {!isSearching &&
                 search.trim() &&
                 filteredPeople.length === 0 && (
+
                     <div className="peoples-search-status">
                         مراجعه‌کننده‌ای پیدا نشد
                     </div>
+
                 )}
 
-            <button onClick={exportExcel}>
+            <button
+                onClick={exportExcel}
+            >
                 تبدیل به EXCEL
             </button>
 
-            <button onClick={js_to_pdf}>
+            <button
+                onClick={js_to_pdf}
+            >
                 تبدیل به PDF
             </button>
 
         </div>
+
     );
+
 };
 
 export default Peoples;

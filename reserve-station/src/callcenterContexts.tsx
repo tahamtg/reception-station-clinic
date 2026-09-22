@@ -11,7 +11,7 @@ interface children{
 
 export const contextCon = createContext<consent | null>(null)
 
-const ConsentContext: React.FC<children> = ({children}) => {
+const CallCenterContext: React.FC<children> = ({children}) => {
 
     const [dataConsent, setDataConsent] = useState<string>("")
 
@@ -25,4 +25,4 @@ const ConsentContext: React.FC<children> = ({children}) => {
 
 }
  
-export default ConsentContext;
+export default CallCenterContext;

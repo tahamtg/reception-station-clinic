@@ -13,15 +13,16 @@ interface afrad {
     date: string;
     id: number;
     services: string;
+    price: number;
 }
-
 
 const Consent: React.FC = () => {
 
     const [addText, setAddText] = useState(false);
     const [service, setService] = useState("");
     const [afrad, setAfrad] = useState<afrad[]>([]);
-    const [selectedId, setSelectedId] = useState<number | null>(null);
+    const [selectedId, setSelectedId] =
+        useState<number | null>(null);
 
     const web = useRef<WebSocket | null>(null);
 
@@ -73,25 +74,28 @@ const Consent: React.FC = () => {
         const wkurl =
             "ws://127.0.0.1:8000/ws/services/getdata/";
 
-            web.current = new WebSocket(wkurl);
+        web.current = new WebSocket(wkurl);
 
-            web.current.onopen = () => {
+        web.current.onopen = () => {
 
             console.log("connected websocket");
 
             web.current?.send(
                 JSON.stringify({
                     type: "send_data"
-                    })
-                );
+                })
+            );
 
-            };
+        };
 
         web.current.onmessage = (event) => {
 
             const data = JSON.parse(event.data);
 
-            console.log("WEBSOCKET DATA:", data);
+            console.log(
+                "WEBSOCKET DATA:",
+                data
+            );
 
             if (data.type === "get_Data") {
 
@@ -105,14 +109,19 @@ const Consent: React.FC = () => {
                     date: data.date,
                     id: data.id,
                     services: data.services,
+                    price: data.price,
                 };
 
-                console.log("PERSON:", person);
+                console.log(
+                    "PERSON:",
+                    person
+                );
 
                 setAfrad((prev) => {
 
                     const exists = prev.some(
-                        (item) => item.id === person.id
+                        (item) =>
+                            item.id === person.id
                     );
 
                     if (exists) {
@@ -132,19 +141,26 @@ const Consent: React.FC = () => {
 
         web.current.onerror = (error) => {
 
-            console.log("WebSocket error:", error);
+            console.log(
+                "WebSocket error:",
+                error
+            );
 
         };
 
         web.current.onclose = () => {
 
-            console.log("WebSocket closed");
+            console.log(
+                "WebSocket closed"
+            );
 
         };
 
         return () => {
 
-            console.log("USE EFFECT CLEANUP");
+            console.log(
+                "USE EFFECT CLEANUP"
+            );
 
             web.current?.close();
             web.current = null;
@@ -154,9 +170,12 @@ const Consent: React.FC = () => {
     }, []);
 
     return (
+
         <div className="consent-container">
 
-            <h1>مراجعه کنندگان مشاوره</h1>
+            <h1>
+                مراجعه کنندگان مشاوره
+            </h1>
 
             <div className="consent-list">
 
@@ -165,9 +184,15 @@ const Consent: React.FC = () => {
                     <div
                         key={person.id}
                         className={`person-box ${
-                            selectedId === person.id ? "active" : ""
+                            selectedId === person.id
+                                ? "active"
+                                : ""
                         }`}
-                        onClick={() => setSelectedId(person.id)}
+                        onClick={() =>
+                            setSelectedId(
+                                person.id
+                            )
+                        }
                     >
 
                         <span>
@@ -191,7 +216,9 @@ const Consent: React.FC = () => {
                         </h2>
 
                         <button
-                            onClick={() => setSelectedId(null)}
+                            onClick={() =>
+                                setSelectedId(null)
+                            }
                         >
                             بستن
                         </button>
@@ -202,37 +229,58 @@ const Consent: React.FC = () => {
 
                         <div>
                             <span>آیدی</span>
-                            <p>{selectedPerson.id}</p>
+                            <p>
+                                {selectedPerson.id}
+                            </p>
                         </div>
 
                         <div>
                             <span>نام</span>
-                            <p>{selectedPerson.name}</p>
+                            <p>
+                                {selectedPerson.name}
+                            </p>
                         </div>
 
                         <div>
                             <span>سن</span>
-                            <p>{selectedPerson.age}</p>
+                            <p>
+                                {selectedPerson.age}
+                            </p>
                         </div>
 
                         <div>
                             <span>تلفن</span>
-                            <p>{selectedPerson.phone}</p>
+                            <p>
+                                {selectedPerson.phone}
+                            </p>
                         </div>
 
                         <div>
                             <span>کد پذیرش</span>
-                            <p>{selectedPerson.file}</p>
+                            <p>
+                                {selectedPerson.file}
+                            </p>
                         </div>
 
                         <div>
                             <span>تاریخ رزرو</span>
-                            <p>{selectedPerson.reserve_date}</p>
+                            <p>
+                                {selectedPerson.reserve_date}
+                            </p>
+                        </div>
+
+                        <div>
+                            <span>قیمت</span>
+                            <p>
+                                {selectedPerson.price}
+                            </p>
                         </div>
 
                         <div className="address">
 
-                            <span>آدرس</span>
+                            <span>
+                                آدرس
+                            </span>
 
                             <p>
                                 {selectedPerson.address}
@@ -274,7 +322,9 @@ const Consent: React.FC = () => {
                                     id="text"
                                     value={service}
                                     onChange={(e) =>
-                                        setService(e.target.value)
+                                        setService(
+                                            e.target.value
+                                        )
                                     }
                                 />
 
@@ -317,24 +367,33 @@ const Consent: React.FC = () => {
                                     {selectedPerson.services
                                         .split(",")
                                         .reverse()
-                                        .map((item, index) => (
+                                        .map(
+                                            (
+                                                item,
+                                                index
+                                            ) => (
 
-                                            <div
-                                                className="items"
-                                                key={`${item}-${index}`}
-                                            >
+                                                <div
+                                                    className="items"
+                                                    key={`${item}-${index}`}
+                                                >
 
-                                                <span className="service-index">
-                                                    {index + 1} -
-                                                </span>
+                                                    <span className="service-index">
+                                                        {index + 1} -
+                                                    </span>
 
-                                                <span className="services">
-                                                    {item.trim()}
-                                                </span>
+                                                    <span className="services">
+                                                        {item.trim()}
+                                                    </span>
 
-                                            </div>
+                                                    <button className="delete-service">
+                                                        ×
+                                                    </button>
 
-                                        ))}
+                                                </div>
+
+                                            )
+                                        )}
 
                                 </div>
 
@@ -359,7 +418,9 @@ const Consent: React.FC = () => {
             )}
 
         </div>
+
     );
+
 };
 
 export default Consent;

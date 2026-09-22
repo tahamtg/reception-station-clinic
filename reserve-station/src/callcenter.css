@@ -1,0 +1,199 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #070b18;
+    color: #e8f0ff;
+    padding: 0;
+}
+
+.reception-container {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 30px;
+
+    background:
+        radial-gradient(circle at 20% 20%, rgba(45, 130, 190, 0.14), transparent 30%),
+        radial-gradient(circle at 80% 70%, rgba(70, 90, 180, 0.12), transparent 30%),
+        #070b18;
+}
+
+.reception-card {
+    width: 100%;
+    max-width: 520px;
+    padding: 36px;
+
+    background: rgba(10, 18, 38, 0.92);
+
+    border: 1px solid #1d3855;
+    border-radius: 8px;
+
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.45),
+        0 0 50px rgba(30, 120, 180, 0.06);
+}
+
+.reception-card h1 {
+    margin: 0 0 8px;
+    font-size: 28px;
+    font-weight: 600;
+    color: #dcecff;
+}
+
+.reception-card > p {
+    margin: 0 0 30px;
+    color: #8295b2;
+    font-size: 14px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label,
+.reception-card > form > label {
+    display: block;
+    margin-bottom: 8px;
+
+    color: #a9bfd9;
+    font-size: 14px;
+}
+
+input {
+    width: 100%;
+    height: 46px;
+    padding: 0 14px;
+
+    background: #0b1326;
+    border: 1px solid #203752;
+    border-radius: 5px;
+
+    color: #e8f2ff;
+    font-size: 14px;
+
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+input::placeholder {
+    color: #50647f;
+}
+
+input:focus {
+    border-color: #4da3d8;
+
+    box-shadow:
+        0 0 0 2px rgba(77, 163, 216, 0.08);
+}
+
+.reception-card > form > label {
+    margin-top: 4px;
+}
+
+.reception-card > form > input {
+    margin-bottom: 24px;
+}
+
+button {
+    width: 100%;
+    height: 46px;
+
+    margin-top: 4px;
+
+    background: #174b6b;
+    border: 1px solid #286d95;
+    border-radius: 5px;
+
+    color: #eaf7ff;
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+button:hover {
+    background: #1c5c80;
+    border-color: #3c91bd;
+}
+
+button:active {
+    background: #12415c;
+}
+
+@media (max-width: 600px) {
+    .reception-container {
+        padding: 18px;
+    }
+
+    .reception-card {
+        padding: 25px 20px;
+    }
+
+    .reception-card h1 {
+        font-size: 24px;
+    }
+}
+
+.error {
+    display: block;
+    margin-top: 6px;
+    color: #ff6b6b;
+    font-size: 13px;
+}
+
+.success {
+    margin-bottom: 20px;
+    padding: 12px;
+    border: 1px solid #2e7d32;
+    border-radius: 5px;
+    background: rgba(46, 125, 50, 0.1);
+    color: #66bb6a;
+    font-size: 14px;
+}
+
+.form-group select {
+    width: 100%;
+    height: 48px;
+
+    padding: 0 14px;
+
+    background: #151515;
+    color: #ffffff;
+
+    border: 1px solid #303030;
+    border-radius: 10px;
+
+    font-family: inherit;
+    font-size: 14px;
+
+    outline: none;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+
+    direction: rtl;
+}
+
+.form-group select:hover {
+    border-color: #555;
+    background: #1b1b1b;
+}
+
+.form-group select:focus {
+    border-color: #777;
+    background: #1b1b1b;
+}
+
+.form-group select option {
+    background: #151515;
+    color: #ffffff;
+
+    padding: 10px;
+}

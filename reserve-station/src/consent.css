@@ -177,3 +177,21 @@
     background: #ff5c5c;
     color: white;
 }
+
+.items {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.delete-service {
+    margin-right: auto;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 20px;
+    line-height: 28px;
+}

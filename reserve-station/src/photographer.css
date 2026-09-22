@@ -1,0 +1,237 @@
+.people-table {
+    width: 100%;
+    padding: 30px;
+    box-sizing: border-box;
+    direction: rtl;
+    overflow-x: auto;
+}
+
+.people-table table {
+    width: 100%;
+    min-width: 1100px;
+    border-collapse: collapse;
+    background: #151515;
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.people-table thead {
+    background: #202020;
+}
+
+.people-table th {
+    padding: 16px 14px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #ffffff;
+    text-align: center;
+    white-space: nowrap;
+    border-bottom: 1px solid #303030;
+}
+
+.people-table td {
+    padding: 14px;
+    font-size: 14px;
+    color: #d6d6d6;
+    text-align: center;
+    border-bottom: 1px solid #292929;
+    white-space: nowrap;
+}
+
+.people-table tbody tr {
+    transition: 0.2s ease;
+}
+
+.people-table tbody tr:hover {
+    background: #1d1d1d;
+}
+
+.people-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.photo-button {
+    width: 100px;
+    height: 70px;
+    border: 1px dashed #555;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #aaa;
+    background: #1b1b1b;
+    transition: 0.2s ease;
+    box-sizing: border-box;
+}
+
+.photo-button:hover {
+    border-color: #888;
+    background: #242424;
+    color: #fff;
+}
+
+.photo-button input {
+    display: none;
+}
+
+@media (max-width: 900px) {
+
+    .people-table {
+        padding: 15px;
+    }
+
+    .people-table table {
+        min-width: 1000px;
+    }
+
+}
+
+.people-table td img {
+    width: 100px;
+    height: 70px;
+    object-fit: cover;
+    border-radius: 10px;
+    display: block;
+    cursor: pointer;
+}
+
+.update-img {
+    position: relative;
+}
+
+.label-update-img {
+    position: relative;
+    display: block;
+    width: 100px;
+    height: 70px;
+}
+
+.label-update-img:hover::before {
+    content: "باز کردن عکس";
+    position: absolute;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: white;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 10px;
+
+    z-index: 2;
+    pointer-events: none;
+}
+
+
+.popupIMG {
+    position: fixed;
+    inset: 0;
+
+    width: 100vw;
+    height: 100vh;
+
+    background: rgba(0, 0, 0, 0.85);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    z-index: 99999;
+}
+
+.popupIMG .fullIMG {
+    width: auto;
+    height: auto;
+
+    max-width: 60vw;
+    max-height: 70vh;
+
+    object-fit: contain;
+
+    border-radius: 12px;
+}
+
+.editBox {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 25px;
+
+    background: white;
+
+    padding: 20px 20px 50px 20px;
+
+    width: 50%;
+    height: 70%;
+
+    border-radius: 20px;
+
+    box-sizing: border-box;
+}
+
+.editBox .fullIMG {
+    width: auto;
+    height: auto;
+
+    max-width: 90%;
+    max-height: calc(100% - 80px);
+
+    object-fit: contain;
+
+    border-radius: 12px;
+}
+
+.buttons {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 15px;
+    direction: rtl;
+}
+
+.edit-button,
+.del-button {
+    width: 120px;
+    height: 42px;
+
+    border: none;
+    border-radius: 10px;
+
+    font-family: inherit;
+    font-size: 14px;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+.edit-button {
+    background: #202020;
+    color: white;
+}
+
+
+.edit-button:hover {
+    background: #333;
+}
+
+.del-button {
+    background: #d32f2f;
+    color: white;
+}
+
+.del-button:hover {
+    background: #b71c1c;
+}
+
+.edit-button:active,
+.del-button:active {
+    transform: scale(0.97);
+}

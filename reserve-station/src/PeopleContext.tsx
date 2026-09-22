@@ -8,8 +8,12 @@ interface People {
     file: number;
     address: string;
     reserve_date: string;
+    services: string;
     id: number;
     date: string;
+    price: number;
+    submit?: boolean;
+    status: string;
 }
 
 interface PeopleContextType {
