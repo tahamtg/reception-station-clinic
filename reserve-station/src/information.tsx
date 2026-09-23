@@ -1,42 +1,100 @@
-import React, { useContext } from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import { useParams } from "react-router-dom";
-import { contextCon } from "./callcenterContexts";
 import "./personInfo.css";
+
+
+interface Person {
+
+    id: number;
+    name: string;
+    age: number;
+    phone: string;
+    file: number | null;
+    address: string | null;
+    reserve_date: string;
+    date: string | null;
+    services: string | null;
+    price: number | null;
+
+}
+
 
 const PersonInfo: React.FC = () => {
 
-    const CallCenterContext = useContext(contextCon);
-
     const { id } = useParams<{ id: string }>();
 
-    if (!CallCenterContext) {
+    const [person, setPerson] =
+        useState<Person | null>(null);
+
+    const [loading, setLoading] =
+        useState(true);
+
+
+    useEffect(() => {
+
+        const getPerson = async () => {
+
+            try {
+
+                const res = await axios.get(
+                    "http://127.0.0.1:8000/api/get_submit_info/"
+                );
+
+                const selectedPerson =
+                    res.data.find(
+                        (item: Person) =>
+                            item.id === Number(id)
+                    );
+
+                setPerson(
+                    selectedPerson || null
+                );
+
+            } catch (error) {
+
+                console.log(error);
+
+                setPerson(null);
+
+            } finally {
+
+                setLoading(false);
+
+            }
+
+        };
+
+        getPerson();
+
+    }, [id]);
+
+
+    if (loading) {
+
         return (
-            <div className="person-error">
-                Context پیدا نشد.
+
+            <div className="person-page">
+
+                <div className="person-card">
+
+                    <h2>
+                        در حال دریافت اطلاعات...
+                    </h2>
+
+                </div>
+
             </div>
+
         );
+
     }
 
-    let person;
 
-    try {
-
-        person = JSON.parse(
-            CallCenterContext.dataConsent || "{}"
-        );
-
-    } catch (error) {
+    if (!person) {
 
         return (
-            <div className="person-error">
-                اطلاعات مراجعه‌کننده نامعتبر است.
-            </div>
-        );
 
-    }
-
-    if (!person.name) {
-        return (
             <div className="person-page">
 
                 <div className="person-card">
@@ -52,10 +110,14 @@ const PersonInfo: React.FC = () => {
                 </div>
 
             </div>
+
         );
+
     }
 
+
     return (
+
         <div className="person-page">
 
             <div className="person-header">
@@ -71,16 +133,19 @@ const PersonInfo: React.FC = () => {
                     </h1>
 
                     <p>
-                        شناسه مراجعه‌کننده: #{id}
+                        شناسه مراجعه‌کننده: #{person.id}
                     </p>
 
                 </div>
 
                 <div className="person-avatar">
+
                     {person.name.charAt(0)}
+
                 </div>
 
             </div>
+
 
             <div className="person-grid">
 
@@ -96,6 +161,7 @@ const PersonInfo: React.FC = () => {
 
                 </div>
 
+
                 <div className="info-box">
 
                     <span>
@@ -107,6 +173,7 @@ const PersonInfo: React.FC = () => {
                     </strong>
 
                 </div>
+
 
                 <div className="info-box">
 
@@ -120,6 +187,59 @@ const PersonInfo: React.FC = () => {
 
                 </div>
 
+
+                <div className="info-box">
+
+                    <span>
+                        پرونده
+                    </span>
+
+                    <strong>
+                        {person.file || "ثبت نشده"}
+                    </strong>
+
+                </div>
+
+
+                <div className="info-box">
+
+                    <span>
+                        آدرس
+                    </span>
+
+                    <strong>
+                        {person.address || "ثبت نشده"}
+                    </strong>
+
+                </div>
+
+
+                <div className="info-box">
+
+                    <span>
+                        تاریخ رزرو
+                    </span>
+
+                    <strong>
+                        {person.reserve_date}
+                    </strong>
+
+                </div>
+
+
+                <div className="info-box">
+
+                    <span>
+                        تاریخ ثبت
+                    </span>
+
+                    <strong>
+                        {person.date || "ثبت نشده"}
+                    </strong>
+
+                </div>
+
+
                 <div className="info-box">
 
                     <span>
@@ -132,13 +252,30 @@ const PersonInfo: React.FC = () => {
 
                 </div>
 
+
+                <div className="info-box">
+
+                    <span>
+                        خدمات
+                    </span>
+
+                    <strong>
+                        {person.services || "خدمتی ثبت نشده"}
+                    </strong>
+
+                </div>
+
             </div>
+
 
             <div className="person-actions">
 
                 <button className="edit-btn">
+
                     ویرایش اطلاعات
+
                 </button>
+
 
                 <button
                     className="back-btn"
@@ -146,13 +283,18 @@ const PersonInfo: React.FC = () => {
                         window.history.back()
                     }
                 >
+
                     بازگشت
+
                 </button>
 
             </div>
 
         </div>
+
     );
+
 };
+
 
 export default PersonInfo;
