@@ -462,7 +462,7 @@ const Peoples: React.FC = () => {
 
                                         ) : (
 
-                                            person.price
+                                            person.price.toLocaleString("en-US")
 
                                         )}
 

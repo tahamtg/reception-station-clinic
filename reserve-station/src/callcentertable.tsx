@@ -7,6 +7,7 @@ import autoTable from "jspdf-autotable";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./CallCenterTable.css";
+import { string } from "yup";
 
 interface Update {
     name: string;
@@ -15,9 +16,19 @@ interface Update {
     price: number;
 }
 
+interface enterType{
+    enter: string,
+    person: number,
+}
+
 const CallCenterTable: React.FC = () => {
 
     const context = useContext(PeoplesContext);
+
+    const [enterType, setEnterType] = useState<enterType>({
+        enter: "",
+        person: 0,
+    })
 
     const [is_update, setIs_update] =
         useState<boolean>(!true);
@@ -211,19 +222,13 @@ const CallCenterTable: React.FC = () => {
                     services: person.services,
                     price: person.price,
                     status: person.status,
+                    enter: person.enter_choices,
                 }
             );
 
             console.log(
                 "SUBMIT DATA:",
                 req.data
-            );
-
-            context.setPeople((prev) =>
-                prev.filter(
-                    (person) =>
-                        person.id !== id
-                )
             );
 
         } catch (error) {
@@ -314,7 +319,7 @@ const CallCenterTable: React.FC = () => {
                             <th>تلفن</th>
                             <th>بیعانه</th>
                             <th>وضعیت</th>
-                            <th>عملیات</th>
+                            <th>از کجا پیدامون کرد</th>
 
                         </tr>
 
@@ -325,7 +330,10 @@ const CallCenterTable: React.FC = () => {
                         {filteredPeople.map(
                             (person) => (
 
-                                <tr
+                                <tr className={person.status === "cancelled" ? "cancelled" : person.status === "consent" ? "consent"
+                                    : person.status === "notaswer" ? "notaswer" : person.status === "done" ? "done" : person.status === "report" ? "report" : person.status === "willpay" ? "willpay"
+                                     : "row"
+                                }
                                     key={person.id}
                                 >
 
@@ -419,7 +427,7 @@ const CallCenterTable: React.FC = () => {
 
                                             <input
                                                 className="callcenter-input"
-                                                type="number"
+                                                type="text"
                                                 value={
                                                     upinfo.price
                                                 }
@@ -435,7 +443,7 @@ const CallCenterTable: React.FC = () => {
 
                                         ) : (
 
-                                            person.price
+                                            person.price.toLocaleString("en-US")
 
                                         )}
 
@@ -449,9 +457,49 @@ const CallCenterTable: React.FC = () => {
                                                 ? "وقت مشاوره داره"
                                                 : person.status === "pending"
                                                     ? "جواب نداده"
+                                                    : person.status === "report"
+                                                        ? "خبر میده"
                                                     : person.status === "done"
                                                         ? "انجام شده"
-                                                        : "نامشخص"}
+                                                    : person.status === "willpay"
+                                                        ? "قراره پرداخت کنه"
+                                                    : person.status === "wasdone"
+                                                        ? "انجام داده"
+                                                    : person.status === "notaswer"
+                                                        ? "جواب نداده"
+                                        : "نامشخص"}
+
+                                    </td>
+
+                                    <td>
+                                        
+                                    {
+
+                                       person.enter_choices === "new_enter"
+                                            ? "ورودی جدید"
+                                            : person.enter_choices === "old_enter"
+                                                ? "ورودی قدیم"
+                                                : person.enter_choices === "instagram"
+                                                    ? "اینستاگرام"
+                                                    : person.enter_choices === "whatsapp"
+                                                        ? "ورودی واتساپ"
+                                                       : person.enter_choices === "google"
+                                                        ? "ورودی گوگل"
+                                                        : person.enter_choices === "introduce"
+                                                        ? "معرفی شده"
+                                                        : person.enter_choices === "bale"
+                                                        ? "ورودی بله"
+                                                        : person.enter_choices === "message"
+                                                        ? "از پیامک"
+                                                        : person.enter_choices === "nini_site"
+                                                        ? "ورودی نی نی سایت"
+                                                        : person.enter_choices === "lucky_wheel"
+                                                        ? "گردونه شانس"
+                                                    : person.enter_choices === "rubika"
+                                                ? "ورودی روبیکا"
+
+                                        : "نامشخص"
+                                        }
 
                                     </td>
 

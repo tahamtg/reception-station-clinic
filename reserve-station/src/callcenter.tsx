@@ -11,6 +11,8 @@ interface People {
     price: string;
     reserve_date: string;
     status: string;
+    enter_choices: string;
+    explain: string;
 }
 
 const CallCenter: React.FC = () => {
@@ -30,6 +32,8 @@ const CallCenter: React.FC = () => {
         price: "",
         reserve_date: "",
         status: "",
+        enter_choices: "",
+        explain: "",
     });
 
     const schema = Yup.object({
@@ -154,6 +158,8 @@ const CallCenter: React.FC = () => {
                 price: "",
                 reserve_date: "",
                 status: "",
+                enter_choices: "",
+                explain: "",
             });
 
             setError(null);
@@ -194,7 +200,7 @@ const CallCenter: React.FC = () => {
     };
 
     const handleChange = (
-        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
     ) => {
 
         setInfo({
@@ -293,13 +299,28 @@ const CallCenter: React.FC = () => {
                             بیعانه
                         </label>
 
-                        <input
-                            type="number"
-                            name="price"
-                            placeholder="بیعانه"
-                            value={info.price}
-                            onChange={handleChange}
-                        />
+                    <input
+                        type="text"
+                        name="price"
+                        placeholder="بیعانه رو به تومان بنویسید"
+                        value={
+                            isNaN(Number(info.price)) ? ""
+                            : info.price
+                                ? Number(info.price).toLocaleString("en-US")
+                                : ""
+                        }
+                        
+                        onChange={(e) => {
+                            const value = e.target.value
+                                .replace(/٬/g, "")
+                                .replace(/,/g, "");
+
+                            setInfo({
+                                ...info,
+                                price: value,
+                            });
+                        }}
+                    />
 
                     </div>
 
@@ -327,15 +348,50 @@ const CallCenter: React.FC = () => {
                     <div className="form-group">
 
                         <label>
+                             از کجا مارو پیدا کرده؟
+                        </label>
+
+                        <select name="enter_choices" id="enter_choices" onChange={handleChange}>
+                            <option value="new_enter">ورودی جدید</option>
+                            <option value="old_enter">ورودی قدیم</option>
+                            <option value="instagram">اینستاگرام</option>
+                            <option value="whatsapp">ورودی واتساپ</option>
+                            <option value="google">گوگل</option>
+                            <option value="introduce">معرفی</option>
+                            <option value="bale">بله</option>
+                            <option value="message">پیامک</option>
+                            <option value="lucky_wheel">گردونه شانس</option>
+                            <option value="rubika">روبیکا</option>
+                            <option value="nini_site">نی نی سایت</option>
+                        </select>
+
+                    </div>
+
+                    <div className="form-group">
+
+                        <label>
                            وضعیت
                         </label>
 
                         <select name="status" id="status" onChange={handleChange}>
                             <option value="done" >انجام شد</option>
-                            <option value="pending">هنوز جواب نداده</option>
                             <option value="consent">وقت مشاوره گرفته</option>
                             <option value="cancelled">کنسل شده</option>
+                            <option value="report">قراره خبر بده</option>
+                            <option value="willpay">بیعانه قراره بزنه</option>
+                            <option value="wasdone">انجام داده</option>
+                            <option value="notaswer">جواب نداده</option>
                         </select>
+
+                    </div>
+
+                    <div className="form-group">
+
+                        <label>
+                           توضیحات
+                        </label>
+
+                        <textarea placeholder="توضیحات رو اینجا بنویسید" name="explain" id="explain" onChange={handleChange}></textarea>
 
                     </div>
 

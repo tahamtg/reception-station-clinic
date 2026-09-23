@@ -14,6 +14,8 @@ interface People {
     price: number;
     submit?: boolean;
     status: string;
+    enter_choices: string;
+    explain: string;
 }
 
 interface PeopleContextType {

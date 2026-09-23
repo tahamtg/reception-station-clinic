@@ -5,10 +5,25 @@ class Personal(models.Model):
     STATUS_CHOICES = [
         ("cancelled", "کنسل شد"),
         ("consent", "وقت مشاوره داره"),
-        ("pending", "جواب نداده"),
+        ("pending", "در انتظار بیعانه"),
         ("done", "انجام شده"),
         ("report", "خبر میدم"),
-        ("willpay", "بیعانه قراره بزنم"),
+        ("wasdone", "انجام داده"),
+        ("notaswer", "جواب نداده"),
+    ]
+
+    ENTER_CHOICES = [
+        ("new_enter", "ورودی جدید"),
+        ("old_enter", "ورودی قدیم"),
+        ("instagram", "اینستاگرام"),
+        ("whatsapp", "ورودی واتساپ"),
+        ("google", "گوگل"),
+        ("introduce", "معرفی"),
+        ("bale", "بله"),
+        ("message", "پیامک"),
+        ("lucky_wheel", "گردونه شانس"),
+        ("rubika", "روبیکا"),
+        ("nini_site", "نی نی سایت"),
     ]
 
     name = models.CharField(max_length=122)
@@ -27,6 +42,14 @@ class Personal(models.Model):
         blank=True,
         max_length=20,
     )
+    enter_choices = models.CharField(
+            choices=ENTER_CHOICES,
+            null=True,
+            blank=True,
+            max_length=20,
+    )
+    city = models.CharField(max_length=122, blank=True, null=True)
+    explain = models.TextField()
 
     def __str__(self):
         return self.name
@@ -42,6 +65,7 @@ class SubmitPersonal(models.Model):
     date = models.DateField(auto_now_add=True, null=True)
     services = models.TextField(blank=True, null=True)
     price = models.IntegerField(blank=True, null=True)
+    explain = models.TextField()
 
 class PersonalPicture(models.Model):
     
@@ -56,5 +80,16 @@ class PersonalPicture(models.Model):
 
     def __str__(self):
         return f"{self.person.name} - تصاویر"
+
+class CallCenter(models.Model):
+
+    EMPLOYEE_CHOICES = [
+        ("atefeh", "عاطفه"),
+        ("haniye", "هانیه"),
+    ]
+
+    persons = models.ForeignKey(Personal,on_delete=models.CASCADE, related_name="employee")
+    name = models.CharField(max_length=122)
+
 
     

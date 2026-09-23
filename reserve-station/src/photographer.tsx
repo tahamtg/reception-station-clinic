@@ -216,20 +216,6 @@ const PhotoGraph = () => {
 
                         <th>نام</th>
 
-                        <th>سن</th>
-
-                        <th>شماره تماس</th>
-
-                        <th>پرونده</th>
-
-                        <th>خدمات</th>
-
-                        <th>تاریخ رزرو</th>
-
-                        <th>عکس قبل</th>
-
-                        <th>عکس بعد</th>
-
                     </tr>
 
                 </thead>
@@ -252,26 +238,6 @@ const PhotoGraph = () => {
 
                                 <td>
                                     {person.name}
-                                </td>
-
-                                <td>
-                                    {person.age}
-                                </td>
-                    
-                                <td>
-                                    {person.phone}
-                                </td>
-
-                                <td>
-                                    {person.file}
-                                </td>
-
-                                <td>
-                                    {person.services}
-                                </td>
-
-                                <td>
-                                    {person.reserve_date}
                                 </td>
 
                                 <td>

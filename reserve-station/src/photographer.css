@@ -1,4 +1,5 @@
-.people-table {
+.people-table
+{
     width: 100%;
     padding: 30px;
     box-sizing: border-box;
@@ -6,21 +7,27 @@
     overflow-x: auto;
 }
 
-.people-table table {
+
+.people-table table
+{
     width: 100%;
-    min-width: 1100px;
+    min-width: 850px;
     border-collapse: collapse;
     background: #151515;
-    border-radius: 14px;
+    border-radius: 16px;
     overflow: hidden;
 }
 
-.people-table thead {
+
+.people-table thead
+{
     background: #202020;
 }
 
-.people-table th {
-    padding: 16px 14px;
+
+.people-table th
+{
+    padding: 17px 15px;
     font-size: 14px;
     font-weight: 600;
     color: #ffffff;
@@ -29,87 +36,132 @@
     border-bottom: 1px solid #303030;
 }
 
-.people-table td {
-    padding: 14px;
+
+.people-table td
+{
+    padding: 15px;
     font-size: 14px;
     color: #d6d6d6;
     text-align: center;
     border-bottom: 1px solid #292929;
     white-space: nowrap;
+    vertical-align: middle;
 }
 
-.people-table tbody tr {
+
+.people-table tbody tr
+{
     transition: 0.2s ease;
 }
 
-.people-table tbody tr:hover {
+
+.people-table tbody tr:hover
+{
     background: #1d1d1d;
 }
 
-.people-table tbody tr:last-child td {
+
+.people-table tbody tr:last-child td
+{
     border-bottom: none;
 }
 
-.photo-button {
-    width: 100px;
-    height: 70px;
+
+.people-table td:first-child
+{
+    color: #888;
+    font-weight: 500;
+}
+
+
+.photo-button
+{
+    width: 110px;
+    height: 75px;
+
     border: 1px dashed #555;
-    border-radius: 10px;
+    border-radius: 11px;
+
     display: flex;
     align-items: center;
     justify-content: center;
+
     cursor: pointer;
+
     color: #aaa;
     background: #1b1b1b;
+
     transition: 0.2s ease;
+
     box-sizing: border-box;
 }
 
-.photo-button:hover {
+
+.photo-button:hover
+{
     border-color: #888;
     background: #242424;
     color: #fff;
 }
 
-.photo-button input {
+
+.photo-button input
+{
     display: none;
 }
 
-@media (max-width: 900px) {
 
-    .people-table {
-        padding: 15px;
-    }
+.people-table td img
+{
+    width: 110px;
+    height: 75px;
 
-    .people-table table {
-        min-width: 1000px;
-    }
+    object-fit: cover;
 
+    border-radius: 11px;
+
+    display: block;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
 }
 
-.people-table td img {
-    width: 100px;
-    height: 70px;
-    object-fit: cover;
-    border-radius: 10px;
+
+.people-table td img:hover
+{
+    transform: scale(1.03);
+}
+
+
+.update-img
+{
+    position: relative;
+
+    width: 110px;
+    height: 75px;
+}
+
+
+.label-update-img
+{
+    position: relative;
+
     display: block;
+
+    width: 110px;
+    height: 75px;
+
     cursor: pointer;
 }
 
-.update-img {
-    position: relative;
-}
 
-.label-update-img {
-    position: relative;
-    display: block;
-    width: 100px;
-    height: 70px;
-}
-
-.label-update-img:hover::before {
+.label-update-img:hover::before
+{
     content: "باز کردن عکس";
+
     position: absolute;
+
     inset: 0;
 
     width: 100%;
@@ -120,118 +172,259 @@
     justify-content: center;
 
     color: white;
+
     background: rgba(0, 0, 0, 0.7);
-    border-radius: 10px;
+
+    border-radius: 11px;
 
     z-index: 2;
+
     pointer-events: none;
+
+    font-size: 13px;
 }
 
 
-.popupIMG {
+.popupIMG
+{
     position: fixed;
+
     inset: 0;
 
     width: 100vw;
     height: 100vh;
 
-    background: rgba(0, 0, 0, 0.85);
+    background: rgba(0, 0, 0, 0.82);
 
     display: flex;
     align-items: center;
     justify-content: center;
 
     z-index: 99999;
-}
 
-.popupIMG .fullIMG {
-    width: auto;
-    height: auto;
-
-    max-width: 60vw;
-    max-height: 70vh;
-
-    object-fit: contain;
-
-    border-radius: 12px;
-}
-
-.editBox {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 25px;
-
-    background: white;
-
-    padding: 20px 20px 50px 20px;
-
-    width: 50%;
-    height: 70%;
-
-    border-radius: 20px;
+    padding: 30px;
 
     box-sizing: border-box;
 }
 
-.editBox .fullIMG {
+
+.editBox
+{
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 25px;
+
+    background: #ffffff;
+
+    padding: 25px;
+
+    width: 550px;
+    height: 650px;
+
+    max-width: 90vw;
+    max-height: 90vh;
+
+    border-radius: 20px;
+
+    box-sizing: border-box;
+
+    box-shadow: 0 20px 70px rgba(0, 0, 0, 0.45);
+}
+
+
+.editBox .fullIMG
+{
     width: auto;
     height: auto;
 
-    max-width: 90%;
-    max-height: calc(100% - 80px);
+    max-width: 100%;
+    max-height: calc(100% - 90px);
 
     object-fit: contain;
 
     border-radius: 12px;
+
+    cursor: default;
 }
 
-.buttons {
+
+.buttons
+{
     display: flex;
+
     align-items: center;
     justify-content: center;
 
     gap: 15px;
+
     direction: rtl;
+
+    width: 100%;
 }
 
+
 .edit-button,
-.del-button {
-    width: 120px;
-    height: 42px;
+.del-button
+{
+    width: 125px;
+    height: 44px;
 
     border: none;
+
     border-radius: 10px;
 
     font-family: inherit;
+
     font-size: 14px;
 
     cursor: pointer;
 
     transition: 0.2s ease;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.edit-button {
+
+.edit-button
+{
     background: #202020;
+
     color: white;
 }
 
 
-.edit-button:hover {
+.edit-button:hover
+{
     background: #333;
 }
 
-.del-button {
+
+.del-button
+{
     background: #d32f2f;
+
     color: white;
 }
 
-.del-button:hover {
+
+.del-button:hover
+{
     background: #b71c1c;
 }
 
+
 .edit-button:active,
-.del-button:active {
+.del-button:active
+{
     transform: scale(0.97);
+}
+
+
+@media (max-width: 900px)
+{
+    .people-table
+    {
+        padding: 15px;
+    }
+
+
+    .people-table table
+    {
+        min-width: 750px;
+    }
+
+
+    .popupIMG
+    {
+        padding: 15px;
+    }
+
+
+    .editBox
+    {
+        width: 90vw;
+        height: 75vh;
+
+        padding: 18px;
+
+        border-radius: 16px;
+    }
+
+
+    .editBox .fullIMG
+    {
+        max-width: 100%;
+        max-height: calc(100% - 80px);
+    }
+
+
+    .buttons
+    {
+        gap: 10px;
+    }
+
+
+    .edit-button,
+    .del-button
+    {
+        width: 115px;
+        height: 42px;
+    }
+}
+
+
+@media (max-width: 500px)
+{
+    .people-table
+    {
+        padding: 10px;
+    }
+
+
+    .people-table table
+    {
+        min-width: 700px;
+    }
+
+
+    .photo-button,
+    .label-update-img,
+    .update-img,
+    .people-table td img
+    {
+        width: 90px;
+        height: 65px;
+    }
+
+
+    .editBox
+    {
+        width: 94vw;
+        height: 70vh;
+
+        padding: 15px;
+    }
+
+
+    .buttons
+    {
+        gap: 8px;
+    }
+
+
+    .edit-button,
+    .del-button
+    {
+        width: 105px;
+        height: 40px;
+
+        font-size: 13px;
+    }
 }

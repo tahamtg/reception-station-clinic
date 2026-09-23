@@ -197,3 +197,14 @@ button:active {
 
     padding: 10px;
 }
+
+.form-group textarea{
+    appearance: none;
+    color: black;
+    outline: none;
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 6px;
+    width: 100%;
+    padding: 10px;
+    height: 100px;
+}

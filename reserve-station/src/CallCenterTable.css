@@ -45,10 +45,6 @@
     font-weight: 600;
 }
 
-.callcenter-table tr:hover {
-    background: #1e1e1e;
-}
-
 .callcenter-input {
     width: 100%;
     padding: 8px 10px;
@@ -157,5 +153,32 @@
     text-align: center;
     color: #aaa;
     font-size: 15px;
+}
+
+.cancelled{
+    background: red;
+}
+
+.consent{
+    background: #00FFFF;
+}
+
+.notaswer{
+    color: black;
+    background: #eeeded;
+}
+
+.done{
+    background: green;
+}
+
+.report{
+    color: black;
+    background: #FFFF00;
+}
+
+.willpay{
+    color: black;
+    background: #FF9900;
 }
 
