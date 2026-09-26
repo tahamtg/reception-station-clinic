@@ -1,4 +1,19 @@
 from django.db import models
+from .manager import Personels
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+
+
+class Users(AbstractBaseUser, PermissionsMixin):
+
+    username = models.CharField(unique=True, max_length=144)
+
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+
+    USERNAME_FIELD = "username"
+    objects = Personels()
+    REQUIRED_FIELDS = []
+
 
 class Personal(models.Model):
 
@@ -36,23 +51,40 @@ class Personal(models.Model):
     services = models.TextField(blank=True, null=True)
     price = models.IntegerField(blank=True, null=True)
     submit = models.BooleanField(default=False, blank=True, null=True)
+
     status = models.CharField(
         choices=STATUS_CHOICES,
         null=True,
         blank=True,
         max_length=20,
     )
+
     enter_choices = models.CharField(
-            choices=ENTER_CHOICES,
-            null=True,
-            blank=True,
-            max_length=20,
+        choices=ENTER_CHOICES,
+        null=True,
+        blank=True,
+        max_length=20,
     )
-    city = models.CharField(max_length=122, blank=True, null=True)
+
+    city = models.CharField(
+        max_length=122,
+        blank=True,
+        null=True
+    )
+
     explain = models.TextField()
+
+    users = models.ForeignKey(
+        Users,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="personals"
+    )
 
     def __str__(self):
         return self.name
+
 
 class SubmitPersonal(models.Model):
 
@@ -67,19 +99,32 @@ class SubmitPersonal(models.Model):
     price = models.IntegerField(blank=True, null=True)
     explain = models.TextField()
 
+
 class PersonalPicture(models.Model):
-    
+
     person = models.ForeignKey(
         SubmitPersonal,
         on_delete=models.CASCADE,
         related_name="pictures"
     )
 
-    img_before = models.ImageField(upload_to="before/", blank=True, null=True)
-    img_after = models.ImageField(upload_to="after/", blank=True, null=True)
+    img_before = models.ImageField(
+        upload_to="before/",
+        blank=True,
+        null=True
+    )
+
+    img_after = models.ImageField(
+        upload_to="after/",
+        blank=True,
+        null=True
+    )
+
+    date = models.DateField(auto_now_add=True, null=True)
 
     def __str__(self):
         return f"{self.person.name} - تصاویر"
+
 
 class CallCenter(models.Model):
 
@@ -88,8 +133,10 @@ class CallCenter(models.Model):
         ("haniye", "هانیه"),
     ]
 
-    persons = models.ForeignKey(Personal,on_delete=models.CASCADE, related_name="employee")
+    persons = models.ForeignKey(
+        Personal,
+        on_delete=models.CASCADE,
+        related_name="employee"
+    )
+
     name = models.CharField(max_length=122)
-
-
-    

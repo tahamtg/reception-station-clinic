@@ -7,7 +7,6 @@ import autoTable from "jspdf-autotable";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./CallCenterTable.css";
-import { string } from "yup";
 
 interface Update {
     name: string;
@@ -16,22 +15,8 @@ interface Update {
     price: number;
 }
 
-interface enterType{
-    enter: string,
-    person: number,
-}
-
 const CallCenterTable: React.FC = () => {
-
     const context = useContext(PeoplesContext);
-
-    const [enterType, setEnterType] = useState<enterType>({
-        enter: "",
-        person: 0,
-    })
-
-    const [is_update, setIs_update] =
-        useState<boolean>(!true);
 
     const [upinfo, setUpInfo] = useState<Update>({
         name: "",
@@ -40,83 +25,57 @@ const CallCenterTable: React.FC = () => {
         price: 0,
     });
 
-    const [userId, setUserId] =
-        useState<number | null>(null);
-
-    const [search, setSearch] =
-        useState("");
-
-    const [isSearching, setIsSearching] =
-        useState(false);
+    const [userId, setUserId] = useState<number | null>(null);
+    const [search, setSearch] = useState("");
+    const [isSearching, setIsSearching] = useState(false);
+    const [submittedIds, setSubmittedIds] = useState<number[]>([]);
 
     const navigate = useNavigate();
 
-    const [isSubmit, setIsSubmit] = useState(false)
-
     useEffect(() => {
-
         const getPeople = async () => {
-
             try {
-
                 const res = await axios.get(
                     "http://127.0.0.1:8000/api/get_info/"
                 );
 
                 context?.setPeople(res.data);
-
             } catch (error) {
-
                 console.log(error);
-
             }
-
         };
 
         getPeople();
-
     }, []);
 
     if (!context) {
         return null;
     }
 
-    const filteredPeople =
-        context.people.filter(
-            (person) =>
-                person.name.includes(search) ||
-                person.phone.includes(search)
-        );
+    const filteredPeople = context.people.filter(
+        (person) =>
+            person.name.includes(search) ||
+            person.phone.includes(search)
+    );
 
     const handleSearch = (value: string) => {
-
         setSearch(value);
 
         if (value.trim()) {
-
             setIsSearching(true);
 
             setTimeout(() => {
                 setIsSearching(false);
             }, 500);
-
         } else {
-
             setIsSearching(false);
-
         }
-
     };
 
     const exportExcel = () => {
+        const worksheet = XLSX.utils.json_to_sheet(context.people);
 
-        const worksheet =
-            XLSX.utils.json_to_sheet(
-                context.people
-            );
-
-        const workbook =
-            XLSX.utils.book_new();
+        const workbook = XLSX.utils.book_new();
 
         XLSX.utils.book_append_sheet(
             workbook,
@@ -124,19 +83,13 @@ const CallCenterTable: React.FC = () => {
             "مراجعه کنندگان"
         );
 
-        XLSX.writeFile(
-            workbook,
-            "people.xlsx"
-        );
-
+        XLSX.writeFile(workbook, "people.xlsx");
     };
 
     const js_to_pdf = () => {
-
         const doc = new jsPDF();
 
         autoTable(doc, {
-
             head: [[
                 "آیدی",
                 "نام",
@@ -146,63 +99,55 @@ const CallCenterTable: React.FC = () => {
                 "وضعیت",
             ]],
 
-            body: context.people.map(
-                (person) => [
-                    person.id,
-                    person.name,
-                    person.age,
-                    person.phone,
-                    person.price,
-                    person.status === "cancelled"
-                        ? "کنسل شد"
-                        : person.status === "consent"
-                            ? "وقت مشاوره داره"
-                            : person.status === "pending"
-                                ? "جواب نداده"
-                                : person.status === "done"
-                                    ? "انجام شده"
-                                    : "نامشخص",
-                ]
-            ),
-
+            body: context.people.map((person) => [
+                person.id,
+                person.name,
+                person.age,
+                person.phone,
+                person.price,
+                person.status === "cancelled"
+                    ? "کنسل شد"
+                    : person.status === "consent"
+                        ? "وقت مشاوره داره"
+                        : person.status === "pending"
+                            ? "در انتظار بیعانه"
+                            : person.status === "done"
+                                ? "انجام شده"
+                                : person.status === "report"
+                                    ? "خبر میده"
+                                    : person.status === "wasdone"
+                                        ? "انجام داده"
+                                        : person.status === "notaswer"
+                                            ? "جواب نداده"
+                                            : "نامشخص",
+            ]),
         });
 
         doc.save("people.pdf");
-
     };
 
     const delete_id = async (id: number) => {
-
         try {
-
             await axios.delete(
                 `http://127.0.0.1:8000/api/delete_info/${id}/`
             );
 
             context.setPeople((prev) =>
-                prev.filter(
-                    (person) =>
-                        person.id !== id
-                )
+                prev.filter((person) => person.id !== id)
             );
 
+            setSubmittedIds((prev) =>
+                prev.filter((personId) => personId !== id)
+            );
         } catch (error) {
-
             console.log(error);
-
         }
-
     };
 
     const submit = async (id: number) => {
-
-        setIsSubmit(true)
-
         try {
-
             const person = context.people.find(
-                (person) =>
-                    person.id === id
+                (person) => person.id === id
             );
 
             if (!person) {
@@ -218,36 +163,29 @@ const CallCenterTable: React.FC = () => {
                     file: person.file,
                     address: person.address,
                     reserve_date: person.reserve_date,
-                    date: person.date,
                     services: person.services,
                     price: person.price,
-                    status: person.status,
-                    enter: person.enter_choices,
+                    explain: person.explain,
                 }
             );
 
-            console.log(
-                "SUBMIT DATA:",
-                req.data
+            console.log("SUBMIT DATA:", req.data);
+
+            setSubmittedIds((prev) =>
+                prev.includes(id)
+                    ? prev
+                    : [...prev, id]
             );
-
         } catch (error) {
-
             console.log(error);
-
         }
-
     };
 
     const update_id = async (
         id: number,
         args: Update
     ) => {
-
-        setIs_update(true);
-
         try {
-
             const up = await axios.patch(
                 `http://127.0.0.1:8000/api/update_info/${id}/`,
                 {
@@ -269,50 +207,35 @@ const CallCenterTable: React.FC = () => {
                 )
             );
 
-            setIs_update(false);
             setUserId(null);
-
         } catch (error) {
-
             console.log(error);
-
         }
-
     };
 
     return (
-
         <div className="callcenter-container">
 
             <div className="callcenter-search">
-
                 <input
                     type="text"
                     placeholder="جستجوی نام یا شماره تماس..."
                     value={search}
                     onChange={(e) =>
-                        handleSearch(
-                            e.target.value
-                        )
+                        handleSearch(e.target.value)
                     }
                 />
-
             </div>
 
             {isSearching ? (
-
                 <div className="callcenter-search-status">
                     در حال جستجو...
                 </div>
-
             ) : (
-
                 <table className="callcenter-table">
 
                     <thead>
-
                         <tr>
-
                             <th>آیدی</th>
                             <th>نام</th>
                             <th>سن</th>
@@ -320,319 +243,257 @@ const CallCenterTable: React.FC = () => {
                             <th>بیعانه</th>
                             <th>وضعیت</th>
                             <th>از کجا پیدامون کرد</th>
-
+                            <th>عملیات</th>
                         </tr>
-
                     </thead>
 
                     <tbody>
+                        {filteredPeople.map((person) => (
 
-                        {filteredPeople.map(
-                            (person) => (
-
-                                <tr className={person.status === "cancelled" ? "cancelled" : person.status === "consent" ? "consent"
-                                    : person.status === "notaswer" ? "notaswer" : person.status === "done" ? "done" : person.status === "report" ? "report" : person.status === "willpay" ? "willpay"
-                                     : "row"
-                                }
-                                    key={person.id}
-                                >
-
-                                    <td>
-                                        {person.id}
-                                    </td>
-
-                                    <td>
-
-                                        {userId === person.id ? (
-
-                                            <input
-                                                className="callcenter-input"
-                                                type="text"
-                                                value={
-                                                    upinfo.name
-                                                }
-                                                onChange={(e) =>
-                                                    setUpInfo({
-                                                        ...upinfo,
-                                                        name: e.target.value,
-                                                    })
-                                                }
-                                            />
-
-                                        ) : (
-
-                                            person.name
-
-                                        )}
-
-                                    </td>
-
-                                    <td>
-
-                                        {userId === person.id ? (
-
-                                            <input
-                                                className="callcenter-input"
-                                                type="number"
-                                                value={
-                                                    upinfo.age
-                                                }
-                                                onChange={(e) =>
-                                                    setUpInfo({
-                                                        ...upinfo,
-                                                        age: Number(
-                                                            e.target.value
-                                                        ),
-                                                    })
-                                                }
-                                            />
-
-                                        ) : (
-
-                                            person.age
-
-                                        )}
-
-                                    </td>
-
-                                    <td>
-
-                                        {userId === person.id ? (
-
-                                            <input
-                                                className="callcenter-input"
-                                                type="tel"
-                                                value={
-                                                    upinfo.phone
-                                                }
-                                                onChange={(e) =>
-                                                    setUpInfo({
-                                                        ...upinfo,
-                                                        phone: e.target.value,
-                                                    })
-                                                }
-                                            />
-
-                                        ) : (
-
-                                            person.phone
-
-                                        )}
-
-                                    </td>
-
-                                    <td>
-
-                                        {userId === person.id ? (
-
-                                            <input
-                                                className="callcenter-input"
-                                                type="text"
-                                                value={
-                                                    upinfo.price
-                                                }
-                                                onChange={(e) =>
-                                                    setUpInfo({
-                                                        ...upinfo,
-                                                        price: Number(
-                                                            e.target.value
-                                                        ),
-                                                    })
-                                                }
-                                            />
-
-                                        ) : (
-
-                                            person.price.toLocaleString("en-US")
-
-                                        )}
-
-                                    </td>
-
-                                    <td>
-
-                                        {person.status === "cancelled"
-                                            ? "کنسل شد"
-                                            : person.status === "consent"
-                                                ? "وقت مشاوره داره"
-                                                : person.status === "pending"
-                                                    ? "جواب نداده"
+                            <tr
+                                className={
+                                    person.status === "cancelled"
+                                        ? "cancelled"
+                                        : person.status === "consent"
+                                            ? "consent"
+                                            : person.status === "notaswer"
+                                                ? "notaswer"
+                                                : person.status === "done"
+                                                    ? "done"
                                                     : person.status === "report"
-                                                        ? "خبر میده"
+                                                        ? "report"
+                                                        : person.status === "willpay"
+                                                            ? "willpay"
+                                                            : "row"
+                                }
+                                key={person.id}
+                            >
+
+                                <td>
+                                    {person.id}
+                                </td>
+
+                                <td>
+                                    {userId === person.id ? (
+                                        <input
+                                            className="callcenter-input"
+                                            type="text"
+                                            value={upinfo.name}
+                                            onChange={(e) =>
+                                                setUpInfo({
+                                                    ...upinfo,
+                                                    name: e.target.value,
+                                                })
+                                            }
+                                        />
+                                    ) : (
+                                        person.name
+                                    )}
+                                </td>
+
+                                <td>
+                                    {userId === person.id ? (
+                                        <input
+                                            className="callcenter-input"
+                                            type="number"
+                                            value={upinfo.age}
+                                            onChange={(e) =>
+                                                setUpInfo({
+                                                    ...upinfo,
+                                                    age: Number(
+                                                        e.target.value
+                                                    ),
+                                                })
+                                            }
+                                        />
+                                    ) : (
+                                        person.age
+                                    )}
+                                </td>
+
+                                <td>
+                                    {userId === person.id ? (
+                                        <input
+                                            className="callcenter-input"
+                                            type="tel"
+                                            value={upinfo.phone}
+                                            onChange={(e) =>
+                                                setUpInfo({
+                                                    ...upinfo,
+                                                    phone: e.target.value,
+                                                })
+                                            }
+                                        />
+                                    ) : (
+                                        person.phone
+                                    )}
+                                </td>
+
+                                <td>
+                                    {userId === person.id ? (
+                                        <input
+                                            className="callcenter-input"
+                                            type="text"
+                                            value={upinfo.price.toLocaleString("en-US")}
+                                            onChange={(e) =>
+                                                setUpInfo({
+                                                    ...upinfo,
+                                                    price: Number(
+                                                        e.target.value
+                                                    ),
+                                                })
+                                            }
+                                        />
+                                    ) : (
+                                        person.price
+                                            ? person.price.toLocaleString("en-US")
+                                            : ""
+                                    )}
+                                </td>
+
+                                <td>
+                                    {person.status === "cancelled"
+                                        ? "کنسل شد"
+                                        : person.status === "consent"
+                                            ? "وقت مشاوره داره"
+                                            : person.status === "pending"
+                                                ? "در انتظار بیعانه"
+                                                : person.status === "report"
+                                                    ? "خبر میده"
                                                     : person.status === "done"
                                                         ? "انجام شده"
-                                                    : person.status === "willpay"
-                                                        ? "قراره پرداخت کنه"
-                                                    : person.status === "wasdone"
-                                                        ? "انجام داده"
-                                                    : person.status === "notaswer"
-                                                        ? "جواب نداده"
-                                        : "نامشخص"}
+                                                        : person.status === "willpay"
+                                                            ? "قراره پرداخت کنه"
+                                                            : person.status === "wasdone"
+                                                                ? "انجام داده"
+                                                                : person.status === "notaswer"
+                                                                    ? "جواب نداده"
+                                                                    : "نامشخص"}
+                                </td>
 
-                                    </td>
-
-                                    <td>
-                                        
-                                    {
-
-                                       person.enter_choices === "new_enter"
-                                            ? "ورودی جدید"
-                                            : person.enter_choices === "old_enter"
-                                                ? "ورودی قدیم"
-                                                : person.enter_choices === "instagram"
-                                                    ? "اینستاگرام"
-                                                    : person.enter_choices === "whatsapp"
-                                                        ? "ورودی واتساپ"
-                                                       : person.enter_choices === "google"
+                                <td>
+                                    {person.enter_choices === "new_enter"
+                                        ? "ورودی جدید"
+                                        : person.enter_choices === "old_enter"
+                                            ? "ورودی قدیم"
+                                            : person.enter_choices === "instagram"
+                                                ? "اینستاگرام"
+                                                : person.enter_choices === "whatsapp"
+                                                    ? "ورودی واتساپ"
+                                                    : person.enter_choices === "google"
                                                         ? "ورودی گوگل"
                                                         : person.enter_choices === "introduce"
-                                                        ? "معرفی شده"
-                                                        : person.enter_choices === "bale"
-                                                        ? "ورودی بله"
-                                                        : person.enter_choices === "message"
-                                                        ? "از پیامک"
-                                                        : person.enter_choices === "nini_site"
-                                                        ? "ورودی نی نی سایت"
-                                                        : person.enter_choices === "lucky_wheel"
-                                                        ? "گردونه شانس"
-                                                    : person.enter_choices === "rubika"
-                                                ? "ورودی روبیکا"
+                                                            ? "معرفی شده"
+                                                            : person.enter_choices === "bale"
+                                                                ? "ورودی بله"
+                                                                : person.enter_choices === "message"
+                                                                    ? "از پیامک"
+                                                                    : person.enter_choices === "nini_site"
+                                                                        ? "ورودی نی نی سایت"
+                                                                        : person.enter_choices === "lucky_wheel"
+                                                                            ? "گردونه شانس"
+                                                                            : person.enter_choices === "rubika"
+                                                                                ? "ورودی روبیکا"
+                                                                                : "نامشخص"}
+                                </td>
 
-                                        : "نامشخص"
-                                        }
+                                <td>
+                                    <div className="callcenter-actions">
 
-                                    </td>
+                                        <button
+                                            className="callcenter-btn callcenter-delete"
+                                            onClick={() =>
+                                                delete_id(person.id)
+                                            }
+                                        >
+                                            حذف
+                                        </button>
 
-                                    <td>
+                                        <button
+                                            className="callcenter-btn callcenter-submit"
+                                            disabled={submittedIds.includes(
+                                                person.id
+                                            )}
+                                            onClick={() =>
+                                                submit(person.id)
+                                            }
+                                        >
+                                            {submittedIds.includes(person.id)
+                                                ? "ثبت شد"
+                                                : "تثبیت"}
+                                        </button>
 
-                                        <div className="callcenter-actions">
+                                        <button
+                                            className="callcenter-btn callcenter-edit"
+                                            onClick={() => {
 
+                                                if (
+                                                    userId === person.id
+                                                ) {
+                                                    setUserId(null);
+                                                } else {
+                                                    setUserId(person.id);
+
+                                                    setUpInfo({
+                                                        name: person.name,
+                                                        age: Number(
+                                                            person.age
+                                                        ),
+                                                        phone: person.phone,
+                                                        price: Number(
+                                                            person.price
+                                                        ),
+                                                    });
+                                                }
+
+                                            }}
+                                        >
+                                            {userId === person.id
+                                                ? "لغو"
+                                                : "ویرایش"}
+                                        </button>
+
+                                        {userId === person.id && (
                                             <button
-                                                className="callcenter-btn callcenter-delete"
+                                                className="callcenter-btn callcenter-save"
                                                 onClick={() =>
-                                                    delete_id(
-                                                        person.id
+                                                    update_id(
+                                                        person.id,
+                                                        upinfo
                                                     )
                                                 }
                                             >
-                                                حذف
+                                                ذخیره
                                             </button>
+                                        )}
 
-                                            <button
-                                                className="callcenter-btn callcenter-submit"
-                                                disabled={isSubmit === true}
-                                                onClick={() =>
-                                                    submit(
-                                                        person.id
-                                                    )
-                                                }
-                                            >
-                                                {isSubmit === true
-                                                    ? "ثبت شد"
-                                                    : "تثبیت"}
-                                            </button>
+                                        <button
+                                            className="callcenter-btn callcenter-details"
+                                            onClick={() =>
+                                                navigate(
+                                                    `/peoples/${person.id}`
+                                                )
+                                            }
+                                        >
+                                            اطلاعات کاملتر
+                                        </button>
 
-                                            <button
-                                                className="callcenter-btn callcenter-edit"
-                                                onClick={() => {
+                                    </div>
+                                </td>
 
-                                                    if (
-                                                        userId ===
-                                                        person.id
-                                                    ) {
-
-                                                        setIs_update(
-                                                            false
-                                                        );
-
-                                                        setUserId(
-                                                            null
-                                                        );
-
-                                                    } else {
-
-                                                        setUserId(
-                                                            person.id
-                                                        );
-
-                                                        setIs_update(
-                                                            true
-                                                        );
-
-                                                        setUpInfo({
-                                                            name: person.name,
-                                                            age: Number(
-                                                                person.age
-                                                            ),
-                                                            phone: person.phone,
-                                                            price: Number(
-                                                                person.price
-                                                            ),
-                                                        });
-
-                                                    }
-
-                                                }}
-                                            >
-                                                {
-                                                    userId ===
-                                                    person.id
-                                                        ? "لغو"
-                                                        : "ویرایش"
-                                                }
-                                            </button>
-
-                                            {userId ===
-                                                person.id && (
-
-                                                    <button
-                                                        className="callcenter-btn callcenter-save"
-                                                        onClick={() =>
-                                                            update_id(
-                                                                person.id,
-                                                                upinfo
-                                                            )
-                                                        }
-                                                    >
-                                                        ذخیره
-                                                    </button>
-
-                                                )}
-
-                                            <button
-                                                className="callcenter-btn callcenter-details"
-                                                onClick={() =>
-                                                    navigate(
-                                                        `/peoples/${person.id}`
-                                                    )
-                                                }
-                                            >
-                                                اطلاعات کاملتر
-                                            </button>
-
-                                        </div>
-
-                                    </td>
-
-                                </tr>
-
-                            )
-                        )}
-
+                            </tr>
+                        ))}
                     </tbody>
 
                 </table>
-
             )}
 
             {!isSearching &&
                 search.trim() &&
                 filteredPeople.length === 0 && (
-
                     <div className="callcenter-search-status">
                         مراجعه‌کننده‌ای پیدا نشد
                     </div>
-
                 )}
 
             <div className="callcenter-export">
@@ -654,9 +515,7 @@ const CallCenterTable: React.FC = () => {
             </div>
 
         </div>
-
     );
-
 };
 
 export default CallCenterTable;

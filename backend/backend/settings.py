@@ -34,6 +34,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
 ]
 
+from datetime import timedelta
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -48,6 +50,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'reserve_station',
 ]
+
+AUTH_USER_MODEL = "reserve_station.Users"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -97,6 +101,8 @@ DATABASES = {
     }
 }
 
+CORS_ALLOW_CREDENTIALS = True
+
 # Password validation
 # https://docs.djangoproject.com/en/6.1/ref/settings/#auth-password-validators
 
@@ -115,6 +121,15 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "reserve_station.authentication.CookieJWTAuthentication",
+    ],
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME" : timedelta(days=1)
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/6.1/topics/i18n/

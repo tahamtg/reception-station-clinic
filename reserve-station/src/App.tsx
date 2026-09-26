@@ -10,6 +10,7 @@ import Assistant from "./Assistant";
 import CallCenterTable from "./callcentertable";
 import CallCenter from "./callcenter";
 import PhotoGraph from "./photographer";
+import Login from "./login";
 
 const App = () => {
     return (
@@ -19,6 +20,7 @@ const App = () => {
                 <Routes>
                     <Route path="/" element={<Reception />} />
                     <Route path="/peoples" element={<Peoples />} />
+                    <Route path="/login" element={<Login />} />
                     <Route path="/consent" element={<Consent />} />
                     <Route path="/Assistant" element={<Assistant />} />
                     <Route path="/callcentertable" element={<CallCenterTable />} />

@@ -1,8 +1,7 @@
 import axios from "axios";
-import React, { useContext, useState, useEffect, useRef } from "react";
-import "./callcenter.css";
+import React, { useEffect, useRef, useState } from "react";
 import * as Yup from "yup";
-import { contextCon } from "./callcenterContexts";
+import "./callcenter.css";
 
 interface People {
     name: string;
@@ -16,8 +15,6 @@ interface People {
 }
 
 const CallCenter: React.FC = () => {
-
-    const CallCenterContext = useContext(contextCon);
     const web = useRef<WebSocket | null>(null);
 
     const [error, setError] =
@@ -55,7 +52,6 @@ const CallCenter: React.FC = () => {
     });
 
     useEffect(() => {
-
         const wkurl =
             "ws://127.0.0.1:8000/ws/services/getdata/";
 
@@ -66,7 +62,6 @@ const CallCenter: React.FC = () => {
         };
 
         web.current.onmessage = (event) => {
-
             const data = JSON.parse(event.data);
 
             console.log(data);
@@ -81,53 +76,46 @@ const CallCenter: React.FC = () => {
         };
 
         return () => {
-
             web.current?.close();
             web.current = null;
-
         };
-
     }, []);
 
     useEffect(() => {
-
         const getPeople = async () => {
-
-            const rqres = await axios.get(
-                "http://127.0.0.1:8000/api/get_info/"
-            );
-
-            console.log("GET DATA:", rqres.data);
-
-            if (
-                web.current &&
-                web.current.readyState === WebSocket.OPEN
-            ) {
-
-                web.current.send(
-                    JSON.stringify({
-                        type: "send_data",
-                        data: rqres.data,
-                    })
+            try {
+                const rqres = await axios.get(
+                    "http://127.0.0.1:8000/api/get_info/"
                 );
 
-            }
+                console.log("GET DATA:", rqres.data);
 
+                if (
+                    web.current &&
+                    web.current.readyState === WebSocket.OPEN
+                ) {
+                    web.current.send(
+                        JSON.stringify({
+                            type: "send_data",
+                            data: rqres.data,
+                        })
+                    );
+                }
+
+            } catch (error) {
+                console.log(error);
+            }
         };
 
         getPeople();
-
     }, []);
-
 
     const postInfo = async (
         e: React.FormEvent<HTMLFormElement>
     ) => {
-
         e.preventDefault();
 
         try {
-
             await schema.validate(info, {
                 abortEarly: false,
             });
@@ -137,48 +125,26 @@ const CallCenter: React.FC = () => {
                 {
                     ...info,
                     age: Number(info.age),
+                    price: info.price
+                        ? Number(info.price.replace(/,/g, ""))
+                        : null,
                 }
             );
 
-            console.log(res.data);
-
             console.log("DJANGO DATA:", res.data);
 
-            console.log(
-                "WEBSOCKET STATE:",
-                web.current?.readyState
-            );
-
             setSuccess(true);
-
-            setInfo({
-                name: "",
-                age: "",
-                phone: "",
-                price: "",
-                reserve_date: "",
-                status: "",
-                enter_choices: "",
-                explain: "",
-            });
-
             setError(null);
 
         } catch (error) {
-
             setSuccess(false);
 
             if (error instanceof Yup.ValidationError) {
-
                 setError(error);
-
-                console.log("YUP:", error.inner);
-
                 return;
             }
 
             if (axios.isAxiosError(error)) {
-
                 console.log(
                     "DJANGO:",
                     error.response?.data
@@ -192,17 +158,18 @@ const CallCenter: React.FC = () => {
     };
 
     const getError = (field: string) => {
-
         return error?.inner.find(
-            (err) => err.path === field
+            err => err.path === field
         )?.message;
-
     };
 
     const handleChange = (
-        e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+        e: React.ChangeEvent<
+            HTMLInputElement |
+            HTMLSelectElement |
+            HTMLTextAreaElement
+        >
     ) => {
-
         setInfo({
             ...info,
             [e.target.name]: e.target.value,
@@ -210,9 +177,7 @@ const CallCenter: React.FC = () => {
 
         setError(null);
         setSuccess(false);
-
     };
-
 
     return (
         <div className="reception-container">
@@ -228,7 +193,6 @@ const CallCenter: React.FC = () => {
                 <form onSubmit={postInfo}>
 
                     <div className="form-group">
-
                         <label>
                             نام و نام خانوادگی
                         </label>
@@ -246,11 +210,9 @@ const CallCenter: React.FC = () => {
                                 {getError("name")}
                             </span>
                         )}
-
                     </div>
 
                     <div className="form-group">
-
                         <label>
                             شماره تلفن
                         </label>
@@ -268,11 +230,9 @@ const CallCenter: React.FC = () => {
                                 {getError("phone")}
                             </span>
                         )}
-
                     </div>
 
                     <div className="form-group">
-
                         <label>
                             سن
                         </label>
@@ -290,42 +250,41 @@ const CallCenter: React.FC = () => {
                                 {getError("age")}
                             </span>
                         )}
-
                     </div>
 
                     <div className="form-group">
-
                         <label>
                             بیعانه
                         </label>
 
-                    <input
-                        type="text"
-                        name="price"
-                        placeholder="بیعانه رو به تومان بنویسید"
-                        value={
-                            isNaN(Number(info.price)) ? ""
-                            : info.price
-                                ? Number(info.price).toLocaleString("en-US")
-                                : ""
-                        }
-                        
-                        onChange={(e) => {
-                            const value = e.target.value
-                                .replace(/٬/g, "")
-                                .replace(/,/g, "");
+                        <input
+                            type="text"
+                            name="price"
+                            placeholder="بیعانه رو به تومان بنویسید"
+                            value={
+                                info.price
+                                    ? Number(
+                                        info.price.replace(/,/g, "")
+                                    ).toLocaleString("en-US")
+                                    : ""
+                            }
+                            onChange={e => {
+                                const value = e.target.value
+                                    .replace(/٬/g, "")
+                                    .replace(/,/g, "");
 
-                            setInfo({
-                                ...info,
-                                price: value,
-                            });
-                        }}
-                    />
+                                setInfo({
+                                    ...info,
+                                    price: value,
+                                });
 
+                                setError(null);
+                                setSuccess(false);
+                            }}
+                        />
                     </div>
 
                     <div className="form-group">
-
                         <label>
                             تاریخ رزرو
                         </label>
@@ -342,57 +301,105 @@ const CallCenter: React.FC = () => {
                                 {getError("reserve_date")}
                             </span>
                         )}
-
                     </div>
 
                     <div className="form-group">
-
                         <label>
-                             از کجا مارو پیدا کرده؟
+                            از کجا مارو پیدا کرده؟
                         </label>
 
-                        <select name="enter_choices" id="enter_choices" onChange={handleChange}>
-                            <option value="new_enter">ورودی جدید</option>
-                            <option value="old_enter">ورودی قدیم</option>
-                            <option value="instagram">اینستاگرام</option>
-                            <option value="whatsapp">ورودی واتساپ</option>
-                            <option value="google">گوگل</option>
-                            <option value="introduce">معرفی</option>
-                            <option value="bale">بله</option>
-                            <option value="message">پیامک</option>
-                            <option value="lucky_wheel">گردونه شانس</option>
-                            <option value="rubika">روبیکا</option>
-                            <option value="nini_site">نی نی سایت</option>
+                        <select
+                            name="enter_choices"
+                            value={info.enter_choices}
+                            onChange={handleChange}
+                        >
+                            <option value="">
+                                انتخاب کنید
+                            </option>
+                            <option value="new_enter">
+                                ورودی جدید
+                            </option>
+                            <option value="old_enter">
+                                ورودی قدیم
+                            </option>
+                            <option value="instagram">
+                                اینستاگرام
+                            </option>
+                            <option value="whatsapp">
+                                ورودی واتساپ
+                            </option>
+                            <option value="google">
+                                گوگل
+                            </option>
+                            <option value="introduce">
+                                معرفی
+                            </option>
+                            <option value="bale">
+                                بله
+                            </option>
+                            <option value="message">
+                                پیامک
+                            </option>
+                            <option value="lucky_wheel">
+                                گردونه شانس
+                            </option>
+                            <option value="rubika">
+                                روبیکا
+                            </option>
+                            <option value="nini_site">
+                                نی نی سایت
+                            </option>
                         </select>
-
                     </div>
 
                     <div className="form-group">
-
                         <label>
-                           وضعیت
+                            وضعیت
                         </label>
 
-                        <select name="status" id="status" onChange={handleChange}>
-                            <option value="done" >انجام شد</option>
-                            <option value="consent">وقت مشاوره گرفته</option>
-                            <option value="cancelled">کنسل شده</option>
-                            <option value="report">قراره خبر بده</option>
-                            <option value="willpay">بیعانه قراره بزنه</option>
-                            <option value="wasdone">انجام داده</option>
-                            <option value="notaswer">جواب نداده</option>
+                        <select
+                            name="status"
+                            value={info.status}
+                            onChange={handleChange}
+                        >
+                            <option value="">
+                                انتخاب کنید
+                            </option>
+                            <option value="done">
+                                انجام شد
+                            </option>
+                            <option value="consent">
+                                وقت مشاوره گرفته
+                            </option>
+                            <option value="cancelled">
+                                کنسل شده
+                            </option>
+                            <option value="report">
+                                قراره خبر بده
+                            </option>
+                            <option value="willpay">
+                                بیعانه قراره بزنه
+                            </option>
+                            <option value="wasdone">
+                                انجام داده
+                            </option>
+                            <option value="notaswer">
+                                جواب نداده
+                            </option>
                         </select>
-
                     </div>
 
                     <div className="form-group">
-
                         <label>
-                           توضیحات
+                            توضیحات
                         </label>
 
-                        <textarea placeholder="توضیحات رو اینجا بنویسید" name="explain" id="explain" onChange={handleChange}></textarea>
-
+                        <textarea
+                            name="explain"
+                            placeholder="توضیحات رو اینجا بنویسید"
+                            value={info.explain}
+                            onChange={handleChange}
+                        />
                     </div>
 
                     {success && (

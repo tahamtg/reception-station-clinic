@@ -8,6 +8,7 @@ urlpatterns = [
     path("update_info/<int:id>/", views.Update_Info, name="update info"),
     path("search_info/", views.Search_Info, name="search info"),
     path("get_submit_info/", views.Get_Submit_Info, name="get submit info"),
+    path("login/", views.CreateTokenCookie.as_view(), name="login users"),
     path("get_Photos/<int:person_id>/", views.Get_Photos, name="get photos"),
     path("post_image/<int:person_id>/", views.Post_images, name="post image"),
     path("confirm_info/<int:id>/", views.Confirm_Info, name="confirm info"),
